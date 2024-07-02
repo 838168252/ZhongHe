@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/binding">
+
+    <fragment
+        android:id="@+id/binding"
+        android:name="com.example.zhonghe.ui.fragment.bindingFragment"
+        android:label="信息绑定"
+        tools:layout="@layout/fragment_binding" />
+
+    <fragment
+        android:id="@+id/substitute"
+        android:name="com.example.zhonghe.ui.fragment.substituteFragment"
+        android:label="封条替换"
+        tools:layout="@layout/fragment_substitute" />
+
+    <fragment
+        android:id="@+id/enter"
+        android:name="com.example.zhonghe.ui.fragment.enterFragment"
+        android:label="入    库"
+        tools:layout="@layout/fragment_enter" />
+    <fragment
+        android:id="@+id/leave"
+        android:name="com.example.zhonghe.ui.fragment.leaveFragment"
+        android:label="出    库"
+        tools:layout="@layout/fragment_leave" />
+    <fragment
+        android:id="@+id/record"
+        android:name="com.example.zhonghe.ui.fragment.recordFragment"
+        android:label="库存记录管理"
+        tools:layout="@layout/fragment_record" />
+    <fragment
+        android:id="@+id/setting"
+        android:name="com.example.zhonghe.ui.fragment.settingFragment"
+        android:label="设    置"
+        tools:layout="@layout/fragment_setting" />
+</navigation>

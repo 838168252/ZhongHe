@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:background="@color/grayness"
+    tools:context=".ui.fragment.recordFragment">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp">
+
+        <TextView
+            android:id="@+id/r_bd"
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="已绑定"
+            android:textColor="@color/colorA8"
+            android:textSize="16dp" />
+
+        <TextView
+            android:id="@+id/r_rk"
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="已入库"
+            android:textColor="@color/colorA8"
+            android:textSize="16dp" />
+
+        <TextView
+            android:id="@+id/r_ck"
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="已出库"
+            android:textColor="@color/colorA8"
+            android:textSize="16dp" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:gravity="center_vertical"
+        android:layout_marginTop="10sp"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/input_bg"
+            android:gravity="center_vertical">
+
+            <EditText
+                android:id="@+id/r_QR"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="绑定信息(二维码或手动输入)："
+                android:textSize="15dp"
+                android:background="@null"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="5dp"
+            android:layout_weight="5"
+            android:gravity="center_vertical">
+
+            <Button
+                android:id="@+id/r_search"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/button_bg"
+                android:text="搜索"
+                android:textSize="10sp"
+                android:textColor="@color/colorWhite"
+                android:gravity="center" />
+        </LinearLayout>
+
+
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@color/black"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="5dp"/>
+    <LinearLayout
+        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:layout_weight="12"
+        android:orientation="vertical"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp">
+        <ListView
+            android:id="@+id/r_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </ListView>
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@color/black"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="5dp"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.7"
+        android:orientation="horizontal"
+        android:paddingTop="10dp"
+        android:paddingBottom="5dp">
+
+        <Button
+            android:id="@+id/r_enter"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:layout_marginLeft="20dp"
+            android:gravity="center"
+            android:background="@drawable/button_bg"
+            android:textColor="@color/colorWhite"
+            android:text="导入文档"
+            android:textSize="15dp"
+            android:textStyle="bold"/>
+
+        <Button
+            android:id="@+id/r_leave"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:gravity="center"
+            android:background="@drawable/button_bg"
+            android:textColor="@color/colorWhite"
+            android:text="导出文档"
+            android:textSize="15dp"
+            android:textStyle="bold"/>
+
+    </LinearLayout>
+
+</LinearLayout>

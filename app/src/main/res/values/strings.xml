@@ -1,0 +1,88 @@
+<resources>
+    <string name="app_name">中核仓管</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+    <string-array name="work_freq">
+        <item>中国1_920_925</item>
+        <item>北美_902_928</item>
+        <item>欧洲_865_867</item>
+    </string-array>
+    <!--功率范围-->
+    <string-array name="power_arrays">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+        <item>16</item>
+        <item>17</item>
+        <item>18</item>
+        <item>19</item>
+        <item>20</item>
+        <item>21</item>
+        <item>22</item>
+        <item>23</item>
+        <item>24</item>
+        <item>25</item>
+        <item>26</item>
+        <item>27</item>
+        <item>28</item>
+        <item>29</item>
+        <item>30</item>
+        <item>31</item>
+        <item>32</item>
+        <item>33</item>
+    </string-array>
+    <!--session-->
+    <string-array name="session_arrays">
+        <item>S0</item>
+        <item>S1</item>
+        <item>S2-多标签</item>
+        <item>S3</item>
+    </string-array>
+    <!--Q值范围-->
+    <string-array name="q_value_arrays">
+        <item>0-单标签</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4-多标签</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+
+    </string-array>
+    <!--盘存方式AB面-->
+    <string-array name="inventory_type_arrays">
+        <item>A面</item>
+        <item>B面</item>
+        <item>A|B面</item>
+    </string-array>
+</resources>

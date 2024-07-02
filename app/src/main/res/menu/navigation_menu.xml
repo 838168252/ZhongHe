@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+>
+    <group android:id="@+id/primary">
+        <item
+            android:id="@+id/binding"
+            android:icon="@drawable/ic_function_icon1"
+            android:title="信息绑定" />
+
+        <item
+            android:id="@+id/substitute"
+            android:icon="@drawable/ic_function_icon2"
+            android:title="封条替换" />
+        <item
+            android:id="@+id/enter"
+            android:icon="@drawable/ic_function_icon3"
+            android:title="入    库" />
+
+        <item
+            android:id="@+id/leave"
+            android:icon="@drawable/ic_function_icon4"
+            android:title="出    库" />
+        <!---->
+        <item
+            android:id="@+id/record"
+            android:icon="@drawable/ic_function_icon5"
+            android:title="库存记录管理" />
+        <item
+            android:id="@+id/setting"
+            android:icon="@drawable/ic_function_icon6"
+            android:title="设    置" />
+    </group>
+</menu>
