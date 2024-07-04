@@ -35,10 +35,13 @@ import com.example.zhonghe.R;
 import com.example.zhonghe.SQLite.dataDao;
 import com.example.zhonghe.pojo.TagInfo;
 import com.example.zhonghe.pojo.data;
+import com.example.zhonghe.pojo.power;
 import com.example.zhonghe.ui.base.BaseFragment;
 import com.example.zhonghe.util.App;
 import com.example.zhonghe.util.CommonUtils;
+import com.example.zhonghe.util.SPDataUtils;
 import com.example.zhonghe.util.ScanUtil;
+import com.example.zhonghe.util.SharedUtil;
 import com.example.zhonghe.util.Util;
 import com.uhf.api.cls.Reader;
 
@@ -56,9 +59,9 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.pda.serialport.Tools;
 
-public class bindingFragment extends BaseFragment  {
+public class bindingFragment extends BaseFragment {
     @BindView(R.id.b_TID)
-    Spinner bTid;
+    EditText bTid;
     @BindView(R.id.b_scan)
     Button bScan;
     @BindView(R.id.b_QR)
@@ -79,8 +82,10 @@ public class bindingFragment extends BaseFragment  {
     private KeyReceiver keyReceiver;
     private boolean mReceiverTag = false;   //广播接受者标识
     private boolean mReceiverQR = false; //广播接收标识-二维码
+    Reader.READER_ERR err;
+    private SharedUtil sharedUtil;
     List<String> list;
-    String TID = "";
+//    String TID = "";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -95,6 +100,7 @@ public class bindingFragment extends BaseFragment  {
         ButterKnife.bind(this, view);
 
         initView();
+        setPower();
         return view;
     }
 
@@ -111,122 +117,140 @@ public class bindingFragment extends BaseFragment  {
         scanUtil = ScanUtil.getInstance(mainActivity);
         //声音
         Util.initSoundPool(mainActivity);//Init sound pool
+        sharedUtil = new SharedUtil(mainActivity);
     }
 
 
     @OnClick(R.id.b_scan)
     public void invenroty() {
         //超高频
-        if (App.mUhfrManager == null) {
-            CommonUtils.showShorMsg(mainActivity, "通讯超时");
-            return;
-        }
-        if (!isReader) {
-            startScanLabels();//开始盘点
-        } else {
-            stopScanLabels();//停止盘点
-        }
+//        if (App.mUhfrManager == null) {
+//            CommonUtils.showShorMsg(mainActivity, "通讯超时");
+//            return;
+//        }
+//        if (!isReader) {
+//            startScanLabels();//开始盘点
+//        } else {
+//            stopScanLabels();//停止盘点
+//        }
+        GetTid();
     }
+
     @OnClick(R.id.b_but1)
-    public void but1(){
-        if(isReader){
+    public void but1() {
+        if (isReader) {
             CommonUtils.showShorMsg(mainActivity, "请先停止扫描TID");
             return;
         }
         add();
     }
+
     @OnClick(R.id.b_but2)
-    public void but2(){
-        if(isReader){
+    public void but2() {
+        if (isReader) {
             CommonUtils.showShorMsg(mainActivity, "请先停止扫描TID");
             return;
         }
         initPane();
     }
 
-    //开始盘存
-    private void startScanLabels() {
-        list = new ArrayList();
-        handler1.postDelayed(runnable_MainActivity, 0);
-        bScan.setText("结束");
-        isReader = true;
+    private void GetTid() {
+        if (App.mUhfrManager == null) {
+            CommonUtils.showShorMsg(mainActivity, "通讯超时");
+            return;
+        }
+        List<Reader.TAGINFO> listTag;
+        listTag = App.mUhfrManager.tagEpcTidInventoryByTimer((short) 50);//开始读卡
+        if (listTag != null && !listTag.isEmpty()) {
+            Util.play(1, 0);//声音
+            String tid = Tools.Bytes2HexString(listTag.get(0).EmbededData, listTag.get(0).EmbededData.length);
+            bTid.setText(tid);
+        }
     }
+
+    //开始盘存
+//    private void startScanLabels() {
+//        list = new ArrayList();
+//        handler1.postDelayed(runnable_MainActivity, 0);
+//        bScan.setText("结束");
+//        isReader = true;
+//    }
 
     //结束盘存
-    private void stopScanLabels() {
-        if (App.isConnectUHF) {
-            if (isReader) {
-                handler1.removeCallbacks(runnable_MainActivity);
-                isReader = false;
-                bScan.setText("扫描");
-            }
-        } else {
-            CommonUtils.showLonMsg(mainActivity, "通讯超时");
-            return;
-        }
-        isReader = false;
-        removeDuplicate();
-    }
+//    private void stopScanLabels() {
+//        if (App.isConnectUHF) {
+//            if (isReader) {
+//                handler1.removeCallbacks(runnable_MainActivity);
+//                isReader = false;
+//                bScan.setText("扫描");
+//            }
+//        } else {
+//            CommonUtils.showLonMsg(mainActivity, "通讯超时");
+//            return;
+//        }
+//        isReader = false;
+//        removeDuplicate();
+//    }
 
-    private Runnable runnable_MainActivity = new Runnable() {
-        @Override
-        public void run() {
-            if (App.mUhfrManager == null) {
-                stopScanLabels();
-                return;
-            }
-            List<Reader.TAGINFO> listTag;
-            listTag = App.mUhfrManager.tagEpcTidInventoryByTimer((short) 50);//开始读卡
-            if (listTag != null && !listTag.isEmpty()) {
-                for (Reader.TAGINFO tfs : listTag) {
-                    String tid = Tools.Bytes2HexString(tfs.EmbededData, tfs.EmbededData.length);
-                    Util.play(1, 0);//声音
-                    System.out.println(tid);
-                    list.add(tid);
-                }
-            }
-            handler1.postDelayed(runnable_MainActivity, 0);
-        }
-    };
+//    private Runnable runnable_MainActivity = new Runnable() {
+//        @Override
+//        public void run() {
+//            if (App.mUhfrManager == null) {
+//                stopScanLabels();
+//                return;
+//            }
+//            List<Reader.TAGINFO> listTag;
+//            listTag = App.mUhfrManager.tagEpcTidInventoryByTimer((short) 50);//开始读卡
+//            if (listTag != null && !listTag.isEmpty()) {
+//                for (Reader.TAGINFO tfs : listTag) {
+//                    String tid = Tools.Bytes2HexString(tfs.EmbededData, tfs.EmbededData.length);
+//                    Util.play(1, 0);//声音
+//                    System.out.println(tid);
+//                    list.add(tid);
+//                }
+//            }
+//            handler1.postDelayed(runnable_MainActivity, 0);
+//        }
+//    };
 
     //利用HashSet不能添加重复数据的特性，来让list不可添加重复EPC
-    private void removeDuplicate() {
-        if (list != null && list.size() != 0) {
-            HashSet<String> hset = new HashSet<String>(list);
-            List<String> numberList = new ArrayList<String>(hset);
-            spinner(numberList);
-        } else {
-            return;
-        }
-    }
+//    private void removeDuplicate() {
+//        if (list != null && list.size() != 0) {
+//            HashSet<String> hset = new HashSet<String>(list);
+//            List<String> numberList = new ArrayList<String>(hset);
+//            spinner(numberList);
+//        } else {
+//            return;
+//        }
+//    }
 
 
     //下拉框
-    private void spinner(List<String> tids) {
-        if (null != tids && tids.size() > 0) {
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(mainActivity, android.R.layout.simple_spinner_item, tids);
-            adapter.setDropDownViewResource(android.R.layout.simple_list_item_single_choice);
-            bTid.setAdapter(adapter);
-
-            bTid.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-
-                    //获取Spinner控件的适配器
-                    ArrayAdapter<String> adapter = (ArrayAdapter<String>) adapterView.getAdapter();
-                    TID = adapter.getItem(i);
-                }
-
-                //没有选中时的处理
-                @Override
-                public void onNothingSelected(AdapterView<?> adapterView) {
-                }
-            });
-        } else {
-            CommonUtils.showShorMsg(mainActivity, "没有搜索到TID");
-            return;
-        }
-    }
+//    private void spinner(List<String> tids) {
+//        if (null != tids && tids.size() > 0) {
+//            ArrayAdapter<String> adapter = new ArrayAdapter<String>(mainActivity, android.R.layout.simple_spinner_item, tids);
+//            adapter.setDropDownViewResource(android.R.layout.simple_list_item_single_choice);
+//            bTid.setAdapter(adapter);
+//
+//            bTid.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//                @Override
+//                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+//
+//                    //获取Spinner控件的适配器
+//                    ArrayAdapter<String> adapter = (ArrayAdapter<String>) adapterView.getAdapter();
+//                    TID = adapter.getItem(i);
+//                }
+//
+//                //没有选中时的处理
+//                @Override
+//                public void onNothingSelected(AdapterView<?> adapterView) {
+//                }
+//            });
+//        } else {
+//            CommonUtils.showShorMsg(mainActivity, "没有搜索到TID");
+//            return;
+//        }
+//    }
 
 
     @OnClick(R.id.b_but2)
@@ -237,23 +261,26 @@ public class bindingFragment extends BaseFragment  {
         }
         initPane();
     }
+
     //使TID和QR为空
-    private void setNull(){
-        list.clear();
-        bTid.setAdapter(null);
+    private void setNull() {
+//        list.clear();
+//        bTid.setAdapter(null);
+        bTid.setText("");
         bQr.setText("");
     }
 
     //清空
     private void initPane() {
-        if(list != null){
-            list.clear();
-        }
+//        if (list != null) {
+//            list.clear();
+//        }
+        bTid.setText("");
         bQr.setText("");
         bBatch.setText("");
         bType.setText("");
         bComment.setText("");
-        bTid.setAdapter(null);
+//        bTid.setAdapter(null);
     }
 
     @Override
@@ -263,13 +290,12 @@ public class bindingFragment extends BaseFragment  {
             App.mUhfrManager.setCancleInventoryFilter();
         }
         registerKeyCodeReceiver();
-        setScanKeyDisable();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        stopScanLabels();
+//        stopScanLabels();
         initPane();
         if (mReceiverTag) {   //判断广播是否注册
             mReceiverTag = false;   //Tag值 赋值为false 表示该广播已被注销
@@ -279,7 +305,6 @@ public class bindingFragment extends BaseFragment  {
             mReceiverQR = false;   //赋值为false 表示该广播已被注销
             mainActivity.unregisterReceiver(receiver);
         }
-        setScanKeyEnable();
     }
 
     //手柄按钮
@@ -343,14 +368,15 @@ public class bindingFragment extends BaseFragment  {
 
     //添加
     private void add() {
+        String Tid = bTid.getText().toString().trim();
         String QR = bQr.getText().toString().trim();
         String batch = bBatch.getText().toString().trim();
         String type = bType.getText().toString().trim();
         String comment = bComment.getText().toString().trim();
 
-        if (TID.length() > 0 && TID != null && QR.length() > 0 && QR != null) {
+        if (Tid.length() > 0 && Tid != null && QR.length() > 0 && QR != null) {
             data da = new data();
-            da.setTID(TID);
+            da.setTID(Tid);
             da.setQR(QR);
             da.setBatch(batch);
             da.setType(type);
@@ -367,29 +393,45 @@ public class bindingFragment extends BaseFragment  {
         }
     }
 
-    //禁止
-    private void setScanKeyDisable() {
-        int currentApiVersion = Build.VERSION.SDK_INT;
-        if (currentApiVersion > Build.VERSION_CODES.N) {
-            // For Android10.0 module
-            scanUtil.disableScanKey("134");
-            scanUtil.disableScanKey("137");
-        }
+//    //禁止
+//    private void setScanKeyDisable() {
+//        int currentApiVersion = Build.VERSION.SDK_INT;
+//        if (currentApiVersion > Build.VERSION_CODES.N) {
+//            // For Android10.0 module
+//            scanUtil.disableScanKey("134");
+//            scanUtil.disableScanKey("137");
+//        }
+//
+//    }
+//
+//    //启动
+//    private void setScanKeyEnable() {
+//        int currentApiVersion = Build.VERSION.SDK_INT;
+//        if (currentApiVersion > Build.VERSION_CODES.N) {
+//            // For Android10.0 module
+//            scanUtil.enableScanKey("134");
+//            scanUtil.enableScanKey("137");
+//        }
+//        try {
+//            Thread.sleep(500);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
-    }
-
-    //启动
-    private void setScanKeyEnable() {
-        int currentApiVersion = Build.VERSION.SDK_INT;
-        if (currentApiVersion > Build.VERSION_CODES.N) {
-            // For Android10.0 module
-            scanUtil.enableScanKey("134");
-            scanUtil.enableScanKey("137");
+    //设置功率
+    private void setPower(){
+        if (!App.isConnectUHF) {
+            CommonUtils.showShorMsg(mainActivity, "通讯超时");
+            return;
         }
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        power p = SPDataUtils.getInfo(mainActivity);
+        err = App.mUhfrManager.setPower(p.getS1(), p.getS1());
+        if (err == Reader.READER_ERR.MT_OK_ERR) {
+            sharedUtil.savePower(p.getS1());
+        } else {
+            //5101 仅支持30db
+            CommonUtils.showShorMsg(mainActivity, "功率设置失败");
         }
     }
 }

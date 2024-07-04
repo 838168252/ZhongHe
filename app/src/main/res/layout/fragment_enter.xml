@@ -180,7 +180,7 @@
             android:gravity="center"
             android:background="@drawable/button_bg"
             android:textColor="@color/colorWhite"
-            android:text="扫描"
+            android:text="扫描TID"
             android:textSize="15dp"
             android:textStyle="bold"/>
 

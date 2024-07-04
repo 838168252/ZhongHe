@@ -30,10 +30,13 @@ import com.example.zhonghe.MainActivity;
 import com.example.zhonghe.R;
 import com.example.zhonghe.SQLite.dataDao;
 import com.example.zhonghe.pojo.data;
+import com.example.zhonghe.pojo.power;
 import com.example.zhonghe.ui.base.BaseFragment;
 import com.example.zhonghe.util.App;
 import com.example.zhonghe.util.CommonUtils;
+import com.example.zhonghe.util.SPDataUtils;
 import com.example.zhonghe.util.ScanUtil;
+import com.example.zhonghe.util.SharedUtil;
 import com.uhf.api.cls.Reader;
 
 import java.text.SimpleDateFormat;
@@ -84,6 +87,8 @@ public class enterFragment extends BaseFragment implements View.OnClickListener 
     private KeyReceiver keyReceiver;
     private MainActivity mainActivity;
     private ScanUtil scanUtil;
+    Reader.READER_ERR err;
+    private SharedUtil sharedUtil;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -102,6 +107,7 @@ public class enterFragment extends BaseFragment implements View.OnClickListener 
         Dialog();
         ListViewA();
         ListViewB();
+        setPower();
         return view;
     }
 
@@ -121,6 +127,7 @@ public class enterFragment extends BaseFragment implements View.OnClickListener 
         contextWrapper.registerReceiver(receiver, filter);
         //初始化扫描
         scanUtil = ScanUtil.getInstance(mainActivity);
+        sharedUtil = new SharedUtil(mainActivity);
     }
 
     private void Dialog() {
@@ -210,7 +217,8 @@ public class enterFragment extends BaseFragment implements View.OnClickListener 
 
     @OnClick(R.id.e_scan)
     public void scan() {
-        scanUtil.startScan();//二维扫描
+//        scanUtil.startScan();//二维扫描
+        uhf();
     }
 
     private void uhf() {
@@ -456,5 +464,21 @@ public class enterFragment extends BaseFragment implements View.OnClickListener 
         das.addAll(dasM.values());
         adapter.notifyDataSetChanged();//刷新adapter
         elseAdapter.notifyDataSetChanged();
+    }
+
+    //设置功率
+    private void setPower(){
+        if (!App.isConnectUHF) {
+            CommonUtils.showShorMsg(mainActivity, "通讯超时");
+            return;
+        }
+        power p = SPDataUtils.getInfo(mainActivity);
+        err = App.mUhfrManager.setPower(p.getS2(), p.getS2());
+        if (err == Reader.READER_ERR.MT_OK_ERR) {
+            sharedUtil.savePower(p.getS2());
+        } else {
+            //5101 仅支持30db
+            CommonUtils.showShorMsg(mainActivity, "功率设置失败");
+        }
     }
 }

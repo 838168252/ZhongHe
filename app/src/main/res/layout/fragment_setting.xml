@@ -9,7 +9,7 @@
     tools:context=".ui.fragment.settingFragment">
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="130dp"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_marginTop="5dp"
         android:background="@drawable/input_bg">
@@ -68,6 +68,7 @@
             android:textColor="@color/color7474"
             android:textSize="15sp"
             android:textStyle="bold"/>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -77,11 +78,74 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="16sp"
-                android:text="输出功率:"
+                android:text="绑定功率:"
                 android:textColor="@color/color7474"
                 android:layout_marginLeft="8dp"/>
             <Spinner
-                android:id="@+id/spinner_power"
+                android:id="@+id/spinner_power1"
+                android:background="@drawable/spinner_background"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:minHeight="40dp"
+                android:entries="@array/power_arrays"
+                android:layout_weight="1" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:text="入库功率:"
+                android:textColor="@color/color7474"
+                android:layout_marginLeft="8dp"/>
+            <Spinner
+                android:id="@+id/spinner_power2"
+                android:background="@drawable/spinner_background"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:minHeight="40dp"
+                android:entries="@array/power_arrays"
+                android:layout_weight="1" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:text="出库功率:"
+                android:textColor="@color/color7474"
+                android:layout_marginLeft="8dp"/>
+            <Spinner
+                android:id="@+id/spinner_power3"
+                android:background="@drawable/spinner_background"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:minHeight="40dp"
+                android:entries="@array/power_arrays"
+                android:layout_weight="1" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:text="替换功率:"
+                android:textColor="@color/color7474"
+                android:layout_marginLeft="8dp"/>
+            <Spinner
+                android:id="@+id/spinner_power4"
                 android:background="@drawable/spinner_background"
                 android:layout_width="wrap_content"
                 android:layout_height="50dp"
@@ -102,7 +166,8 @@
                 android:textSize="18sp"
                 android:text="查 询"
                 android:textColor="@color/colorWhite"
-                android:gravity="center"/>
+                android:gravity="center"
+                android:visibility="gone"/>
             <Button
                 android:id="@+id/button_set_power"
                 android:layout_width="80dp"

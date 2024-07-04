@@ -35,10 +35,14 @@ import com.example.zhonghe.MainActivity;
 import com.example.zhonghe.R;
 import com.example.zhonghe.SQLite.dataDao;
 import com.example.zhonghe.pojo.data;
+import com.example.zhonghe.pojo.power;
 import com.example.zhonghe.ui.base.BaseFragment;
 import com.example.zhonghe.util.App;
 import com.example.zhonghe.util.CommonUtils;
+import com.example.zhonghe.util.SPDataUtils;
 import com.example.zhonghe.util.ScanUtil;
+import com.example.zhonghe.util.SharedUtil;
+import com.example.zhonghe.util.Util;
 import com.uhf.api.cls.Reader;
 
 import java.util.ArrayList;
@@ -83,10 +87,12 @@ public class substituteFragment extends BaseFragment implements View.OnClickList
     private Dialog inputDialog;
     private List<String> tids;
     private String TID = "";
-    private Spinner in_TID;
+    private EditText in_TID;
     private TextView in_TID2;
-    private Button in_but1, in_but2;
+    private Button in_but1, in_but2, in_but3;
     private ScanUtil scanUtil;
+    Reader.READER_ERR err;
+    private SharedUtil sharedUtil;
 
     private MainActivity mainActivity;
 
@@ -106,6 +112,7 @@ public class substituteFragment extends BaseFragment implements View.OnClickList
         Dialog();
         ListViewA();
         ListViewB();
+        setPower();
         return view;
     }
 
@@ -125,6 +132,10 @@ public class substituteFragment extends BaseFragment implements View.OnClickList
         contextWrapper.registerReceiver(receiver, filter);
         //初始化扫描
         scanUtil = ScanUtil.getInstance(mainActivity);
+        //声音
+        Util.initSoundPool(mainActivity);//Init sound pool
+
+        sharedUtil = new SharedUtil(mainActivity);
     }
 
     private void Dialog() {
@@ -135,6 +146,8 @@ public class substituteFragment extends BaseFragment implements View.OnClickList
         in_but1.setOnClickListener(this);
         in_but2 = inputDialog.findViewById(R.id.in_but2);
         in_but2.setOnClickListener(this);
+        in_but3 = inputDialog.findViewById(R.id.in_but3);
+        in_but3.setOnClickListener(this);
     }
 
     @Override
@@ -146,6 +159,23 @@ public class substituteFragment extends BaseFragment implements View.OnClickList
             case R.id.in_but2:
                 inputDialog.dismiss();
                 break;
+            case R.id.in_but3:
+                GetTid();
+                break;
+        }
+    }
+
+    private void GetTid() {
+        if (App.mUhfrManager == null) {
+            CommonUtils.showShorMsg(mainActivity, "通讯超时");
+            return;
+        }
+        List<Reader.TAGINFO> listTag;
+        listTag = App.mUhfrManager.tagEpcTidInventoryByTimer((short) 50);//开始读卡
+        if (listTag != null && !listTag.isEmpty()) {
+            Util.play(1, 0);//声音
+            String tid = Tools.Bytes2HexString(listTag.get(0).EmbededData, listTag.get(0).EmbededData.length);
+            in_TID.setText(tid);
         }
     }
 
@@ -159,14 +189,11 @@ public class substituteFragment extends BaseFragment implements View.OnClickList
             @Override
             public void dataBtn1ClickListener(View view, int position) {
                 data item = dataList.get(position);
-                if (das == null || das.size() == 0) {
-                    CommonUtils.showShorMsg(mainActivity, "请先扫描TID");
-                    return;
-                }
+
                 if (!mainActivity.isFinishing()) {
                     inputDialog.show();
                     in_TID2.setText(item.getTID() + "");
-                    spinner();
+//                    spinner();
                 }
             }
         });
@@ -188,32 +215,32 @@ public class substituteFragment extends BaseFragment implements View.OnClickList
     }
 
     //下拉框
-    private void spinner() {
-        if (null != das && das.size() > 0) {
-            getTid();
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(mainActivity, android.R.layout.simple_spinner_item, tids);
-            adapter.setDropDownViewResource(android.R.layout.simple_list_item_single_choice);
-            in_TID.setAdapter(adapter);
-
-            in_TID.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-
-                    //获取Spinner控件的适配器
-                    ArrayAdapter<String> adapter = (ArrayAdapter<String>) adapterView.getAdapter();
-                    TID = adapter.getItem(i);
-                }
-
-                //没有选中时的处理
-                @Override
-                public void onNothingSelected(AdapterView<?> adapterView) {
-                }
-            });
-        } else {
-            CommonUtils.showShorMsg(mainActivity, "没有搜索到未绑定TID");
-            return;
-        }
-    }
+//    private void spinner() {
+//        if (null != das && das.size() > 0) {
+//            getTid();
+//            ArrayAdapter<String> adapter = new ArrayAdapter<String>(mainActivity, android.R.layout.simple_spinner_item, tids);
+//            adapter.setDropDownViewResource(android.R.layout.simple_list_item_single_choice);
+//            in_TID.setAdapter(adapter);
+//
+//            in_TID.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//                @Override
+//                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+//
+//                    //获取Spinner控件的适配器
+//                    ArrayAdapter<String> adapter = (ArrayAdapter<String>) adapterView.getAdapter();
+//                    TID = adapter.getItem(i);
+//                }
+//
+//                //没有选中时的处理
+//                @Override
+//                public void onNothingSelected(AdapterView<?> adapterView) {
+//                }
+//            });
+//        } else {
+//            CommonUtils.showShorMsg(mainActivity, "没有搜索到未绑定TID");
+//            return;
+//        }
+//    }
 
     //确认提示框
     private void Tooltip(String item) {
@@ -265,6 +292,10 @@ public class substituteFragment extends BaseFragment implements View.OnClickList
 
     @OnClick(R.id.s_scan)
     public void scan() {
+        scanUtil.startScan();//二维扫描
+    }
+
+    private void rfid() {
         //超高频
         if (App.mUhfrManager == null) {
             CommonUtils.showShorMsg(mainActivity, "通讯超时");
@@ -366,20 +397,26 @@ public class substituteFragment extends BaseFragment implements View.OnClickList
         dataList.clear();
         dasM.clear();
         das.clear();
-        window = false;
         sQR.setText("");
         adapter.notifyDataSetChanged();
         elseAdapter.notifyDataSetChanged();
     }
 
     private void replace() {
+        String j = in_TID.getText().toString().trim();
         String i = in_TID2.getText().toString().trim();
-        int a = dataDao.batch3(i, TID);
-        if (a > 0) {
-            CommonUtils.showShorMsg(mainActivity, "替换成功,请重新扫描");
-            inputDialog.dismiss();
-            initPane();
+        if (j != null && j.length() > 0) {
+            int a = dataDao.batch3(i, j);
+            if (a > 0) {
+                CommonUtils.showShorMsg(mainActivity, "替换成功,请重新扫描");
+                inputDialog.dismiss();
+                initPane();
+            }
+        }else {
+            CommonUtils.showShorMsg(mainActivity, "新TID不可为空");
+            return;
         }
+
     }
 
     @Override
@@ -444,11 +481,7 @@ public class substituteFragment extends BaseFragment implements View.OnClickList
                         break;
                     case KeyEvent.KEYCODE_F4://6100
                     case KeyEvent.KEYCODE_F7://H3100
-                        if (window == false) {
-                            scanUtil.startScan();//二维扫描
-                        } else {
-                            scan();
-                        }
+                        scan();
                         break;
                 }
             }
@@ -483,7 +516,6 @@ public class substituteFragment extends BaseFragment implements View.OnClickList
         }
         dataList.addAll(dataMap.values());
         adapter.notifyDataSetChanged();//刷新adapter
-        ChangeState();
     }
 
     private void ChangeState() {
@@ -496,5 +528,20 @@ public class substituteFragment extends BaseFragment implements View.OnClickList
                 window = true;
             }
         }, 2000); //延时2秒
+    }
+    //设置功率
+    private void setPower(){
+        if (!App.isConnectUHF) {
+            CommonUtils.showShorMsg(mainActivity, "通讯超时");
+            return;
+        }
+        power p = SPDataUtils.getInfo(mainActivity);
+        err = App.mUhfrManager.setPower(p.getS4(), p.getS4());
+        if (err == Reader.READER_ERR.MT_OK_ERR) {
+            sharedUtil.savePower(p.getS4());
+        } else {
+            //5101 仅支持30db
+            CommonUtils.showShorMsg(mainActivity, "功率设置失败");
+        }
     }
 }

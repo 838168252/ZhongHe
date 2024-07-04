@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment;
 
 import android.os.Handler;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +38,7 @@ import com.example.zhonghe.ui.base.BaseFragment;
 import com.example.zhonghe.util.App;
 import com.example.zhonghe.util.CommonUtils;
 import com.example.zhonghe.util.FileChooseUtil;
+import com.example.zhonghe.util.ScanUtil;
 import com.example.zhonghe.util.SheetHelper;
 
 import java.text.SimpleDateFormat;
@@ -72,6 +74,11 @@ public class recordFragment extends BaseFragment {
     private Handler mainHandler; //主线程
     private int page = 1;
     private boolean mReceiverQR = false; //广播接收标识-二维码
+    private boolean mReceiverTag = false;   //广播接受者标识
+    private KeyReceiver keyReceiver;
+    private ScanUtil scanUtil;
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,6 +108,9 @@ public class recordFragment extends BaseFragment {
         dataDao = new dataDao(mainActivity);
         //获取主线程
         mainHandler = new Handler();
+        //初始化扫描
+        scanUtil = ScanUtil.getInstance(mainActivity);
+
     }
     //显示列表数据的方法
     private void showLvData(int page) {
@@ -310,13 +320,17 @@ public class recordFragment extends BaseFragment {
         if (App.mUhfrManager != null) {
             App.mUhfrManager.setCancleInventoryFilter();
         }
+        registerKeyCodeReceiver();
     }
 
     @Override
     public void onPause() {
         super.onPause();
         Log.e("pang", "onPause()");
-
+        if (mReceiverTag) {   //判断广播是否注册
+            mReceiverTag = false;   //Tag值 赋值为false 表示该广播已被注销
+            mainActivity.unregisterReceiver(keyReceiver);
+        }
         if (mReceiverQR) {
             mReceiverQR = false;   //赋值为false 表示该广播已被注销
             mainActivity.unregisterReceiver(receiver);
@@ -343,6 +357,48 @@ public class recordFragment extends BaseFragment {
             ListViewA(list);
         } else {
             CommonUtils.showShorMsg(mainActivity, "未查询出信息!");
+        }
+    }
+
+    //手柄按钮
+    private void registerKeyCodeReceiver() {
+        mReceiverTag = true;    //标识值 赋值为 true 表示广播已被注册
+        keyReceiver = new KeyReceiver();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("android.rfid.FUN_KEY");
+        filter.addAction("android.intent.action.FUN_KEY");
+        mainActivity.registerReceiver(keyReceiver, filter);
+    }
+
+    //key receiver
+    //
+    private class KeyReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int keyCode = intent.getIntExtra("keyCode", 0);
+            if (keyCode == 0) {
+                keyCode = intent.getIntExtra("keycode", 0);
+            }
+            boolean keyDown = intent.getBooleanExtra("keydown", false);
+            if (keyDown) {
+//                ToastUtils.showText("KeyReceiver:keyCode = down" + keyCode);
+            } else {
+//                ToastUtils.showText("KeyReceiver:keyCode = up" + keyCode);
+                switch (keyCode) {
+                    case KeyEvent.KEYCODE_F1:
+                        break;
+                    case KeyEvent.KEYCODE_F2:
+                        break;
+                    case KeyEvent.KEYCODE_F5:
+                        break;
+                    case KeyEvent.KEYCODE_F3://C510x
+                        break;
+                    case KeyEvent.KEYCODE_F4://6100
+                    case KeyEvent.KEYCODE_F7://H3100
+                        scanUtil.startScan();//二维扫描
+                        break;
+                }
+            }
         }
     }
 }

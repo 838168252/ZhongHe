@@ -21,10 +21,12 @@ import android.widget.TextView;
 import com.example.zhonghe.BuildConfig;
 import com.example.zhonghe.MainActivity;
 import com.example.zhonghe.R;
+import com.example.zhonghe.pojo.power;
 import com.example.zhonghe.ui.base.BaseFragment;
 import com.example.zhonghe.util.App;
 import com.example.zhonghe.util.CommonUtils;
 import com.example.zhonghe.util.LogUtil;
+import com.example.zhonghe.util.SPDataUtils;
 import com.example.zhonghe.util.SharedUtil;
 import com.handheld.uhfr.UHFRManager;
 import com.uhf.api.cls.Reader;
@@ -36,8 +38,14 @@ import butterknife.OnClick;
 public class settingFragment extends BaseFragment {
     @BindView(R.id.spinner_work_freq)
     Spinner spinnerWorkFreq;
-    @BindView(R.id.spinner_power)
-    Spinner spinnerPower;
+    @BindView(R.id.spinner_power1)
+    Spinner spinnerPower1; //绑定功率
+    @BindView(R.id.spinner_power2)
+    Spinner spinnerPower2;//入库功率
+    @BindView(R.id.spinner_power3)
+    Spinner spinnerPower3;//出库功率
+    @BindView(R.id.spinner_power4)
+    Spinner spinnerPower4;//替换功率
     @BindView(R.id.spinner_session)
     Spinner spinnerSession;
     @BindView(R.id.spinner_q_value)
@@ -78,7 +86,11 @@ public class settingFragment extends BaseFragment {
     private String[] arrayInventoryType;
 
     private Reader.Region_Conf workFreq;    //
-    private int power = 33; //
+    private int s1 = 10; //
+    private int s2 = 33; //
+    private int s3 = 33; //
+    private int s4 = 10; //
+
     private int session = 1; //session
     private int qvalue = 1;//Q
     private int target = 0; //A|B
@@ -86,6 +98,7 @@ public class settingFragment extends BaseFragment {
     private SharedUtil sharedUtil;
     Reader.READER_ERR err;
     private Resources res;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -109,8 +122,9 @@ public class settingFragment extends BaseFragment {
         sharedUtil = new SharedUtil(mainActivity);
         res = this.getResources();
     }
+
     @OnClick(R.id.button_query_work_freq)
-    void queryFreq(){
+    void queryFreq() {
         if (!App.isConnectUHF) {
             CommonUtils.showShorMsg(mainActivity, "通讯超时");
             return;
@@ -140,23 +154,35 @@ public class settingFragment extends BaseFragment {
     }
 
     @OnClick(R.id.button_query_power)
-    void queryPower(){
+    void queryPower() {
         if (!App.isConnectUHF) {
             CommonUtils.showShorMsg(mainActivity, "通讯超时");
             return;
         }
-        int[] powerArray = App.mUhfrManager.getPower();
-        if (powerArray != null && powerArray.length > 0) {
-            LogUtil.e("powerArray = " + powerArray[0]);
-            spinnerPower.setSelection(powerArray[0]);
-            CommonUtils.showShorMsg(mainActivity, "输出功率:" + powerArray[0] + "dB");
+        power p = SPDataUtils.getInfo(mainActivity);
+        if (p != null) {
+            spinnerPower1.setSelection(p.getS1());
+            spinnerPower2.setSelection(p.getS2());
+            spinnerPower3.setSelection(p.getS3());
+            spinnerPower4.setSelection(p.getS4());
         } else {
             CommonUtils.showShorMsg(mainActivity, "查询失败");
         }
+
+
+//        int[] powerArray = App.mUhfrManager.getPower();
+//        if (powerArray != null && powerArray.length > 0) {
+//            LogUtil.e("powerArray = " + powerArray[0]);
+//            spinnerPower1.setSelection(powerArray[0]);
+//
+//            CommonUtils.showShorMsg(mainActivity, "输出功率:" + powerArray[0] + "dB");
+//        } else {
+//            CommonUtils.showShorMsg(mainActivity, "查询失败");
+//        }
     }
 
     @OnClick(R.id.button_query_session)
-    void querySession(){
+    void querySession() {
         if (!App.isConnectUHF) {
             CommonUtils.showShorMsg(mainActivity, "通讯超时");
             return;
@@ -173,7 +199,7 @@ public class settingFragment extends BaseFragment {
     }
 
     @OnClick(R.id.button_query_qvalue)
-    void queryQvalue(){
+    void queryQvalue() {
         if (!App.isConnectUHF) {
             CommonUtils.showShorMsg(mainActivity, "通讯超时");
             return;
@@ -188,8 +214,9 @@ public class settingFragment extends BaseFragment {
         LogUtil.e("qvalue = " + qvalue);
 
     }
+
     @OnClick(R.id.button_query_inventory_type)
-    void queryInventory(){
+    void queryInventory() {
         if (!App.isConnectUHF) {
             CommonUtils.showShorMsg(mainActivity, "通讯超时");
             return;
@@ -203,6 +230,7 @@ public class settingFragment extends BaseFragment {
             CommonUtils.showShorMsg(mainActivity, "查询失败");
         }
     }
+
     @OnClick(R.id.button_set_work_freq)
     void setWorkFreq() {
         if (!App.isConnectUHF) {
@@ -219,21 +247,30 @@ public class settingFragment extends BaseFragment {
             CommonUtils.showShorMsg(mainActivity, "设置失败");
         }
     }
+
     @OnClick(R.id.button_set_power)
     void setPower() {
         if (!App.isConnectUHF) {
             CommonUtils.showShorMsg(mainActivity, "通讯超时");
             return;
         }
-        err = App.mUhfrManager.setPower(power, power);
-        if (err == Reader.READER_ERR.MT_OK_ERR) {
+        boolean i = SPDataUtils.saveInfo(mainActivity, s1, s2, s3, s4);
+        if (i == true) {
             CommonUtils.showShorMsg(mainActivity, "设置成功");
-            sharedUtil.savePower(power);
         } else {
-            //5101 仅支持30db
             CommonUtils.showShorMsg(mainActivity, "设置失败");
         }
+
+//        err = App.mUhfrManager.setPower(s2, s2);
+//        if (err == Reader.READER_ERR.MT_OK_ERR) {
+//            CommonUtils.showShorMsg(mainActivity, "设置成功");
+//            sharedUtil.savePower(s2);
+//        } else {
+//            //5101 仅支持30db
+//            CommonUtils.showShorMsg(mainActivity, "设置失败");
+//        }
     }
+
     @OnClick(R.id.button_set_session)
     void setSession() {
         if (!App.isConnectUHF) {
@@ -248,6 +285,7 @@ public class settingFragment extends BaseFragment {
             CommonUtils.showShorMsg(mainActivity, "设置失败");
         }
     }
+
     @OnClick(R.id.button_set_qvalue)
     void setQvalue() {
         if (!App.isConnectUHF) {
@@ -262,6 +300,7 @@ public class settingFragment extends BaseFragment {
             CommonUtils.showShorMsg(mainActivity, "设置失败");
         }
     }
+
     @OnClick(R.id.button_set_inventory_type)
     void setTarget() {
         if (!App.isConnectUHF) {
@@ -282,7 +321,7 @@ public class settingFragment extends BaseFragment {
     private void versionInformation() {
         String strSoft = BuildConfig.VERSION_NAME;
         tvSoft.setText("  " + strSoft);
-        tvDate.setText("  " + "2024-07-02");
+        tvDate.setText("  " + "2024-07-04");
         if (!App.isConnectUHF) {
             CommonUtils.showShorMsg(mainActivity, "通讯超时");
             return;
@@ -348,10 +387,43 @@ public class settingFragment extends BaseFragment {
             }
         });
         //
-        spinnerPower.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        spinnerPower1.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                power = position;
+                s1 = position;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        spinnerPower2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                s2 = position;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        spinnerPower3.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                s3 = position;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        spinnerPower4.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                s4 = position;
             }
 
             @Override

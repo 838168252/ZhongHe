@@ -31,10 +31,13 @@ import com.example.zhonghe.MainActivity;
 import com.example.zhonghe.R;
 import com.example.zhonghe.SQLite.dataDao;
 import com.example.zhonghe.pojo.data;
+import com.example.zhonghe.pojo.power;
 import com.example.zhonghe.ui.base.BaseFragment;
 import com.example.zhonghe.util.App;
 import com.example.zhonghe.util.CommonUtils;
+import com.example.zhonghe.util.SPDataUtils;
 import com.example.zhonghe.util.ScanUtil;
+import com.example.zhonghe.util.SharedUtil;
 import com.uhf.api.cls.Reader;
 
 import java.text.SimpleDateFormat;
@@ -82,6 +85,8 @@ public class leaveFragment extends BaseFragment {
     private KeyReceiver keyReceiver;
     private boolean mReceiverTag = false;   //广播接受者标识
     private boolean mReceiverQR = false; //广播接收标识-二维码
+    Reader.READER_ERR err;
+    private SharedUtil sharedUtil;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -100,6 +105,7 @@ public class leaveFragment extends BaseFragment {
         initView();
         ListViewA();
         ListViewB();
+        setPower();
         return view;
     }
 
@@ -114,6 +120,8 @@ public class leaveFragment extends BaseFragment {
         dataDao = new dataDao(mainActivity);
         //初始化扫描
         scanUtil = ScanUtil.getInstance(mainActivity);
+        sharedUtil = new SharedUtil(mainActivity);
+
     }
 
     //列表显示数据适配器A
@@ -181,7 +189,8 @@ public class leaveFragment extends BaseFragment {
 
     @OnClick(R.id.l_scan)
     public void lscan() {
-        scanUtil.startScan();//二维扫描
+//        scanUtil.startScan();//二维扫描
+        uhf();
     }
 
     private void uhf() {
@@ -431,5 +440,21 @@ public class leaveFragment extends BaseFragment {
         dataList.addAll(dataMap.values());
         adapter.notifyDataSetChanged();//刷新adapter
         elseAdapter.notifyDataSetChanged();
+    }
+
+    //设置功率
+    private void setPower(){
+        if (!App.isConnectUHF) {
+            CommonUtils.showShorMsg(mainActivity, "通讯超时");
+            return;
+        }
+        power p = SPDataUtils.getInfo(mainActivity);
+        err = App.mUhfrManager.setPower(p.getS3(), p.getS3());
+        if (err == Reader.READER_ERR.MT_OK_ERR) {
+            sharedUtil.savePower(p.getS3());
+        } else {
+            //5101 仅支持30db
+            CommonUtils.showShorMsg(mainActivity, "功率设置失败");
+        }
     }
 }

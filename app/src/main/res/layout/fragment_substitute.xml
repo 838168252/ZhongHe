@@ -72,7 +72,7 @@
     <LinearLayout
         android:layout_height="0dp"
         android:layout_width="match_parent"
-        android:layout_weight="9"
+        android:layout_weight="11"
         android:orientation="vertical"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp">
@@ -93,7 +93,9 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:layout_marginTop="5dp">
+        android:layout_marginTop="5dp"
+        android:visibility="gone"
+        >
 
         <TextView
             android:layout_width="wrap_content"
@@ -114,7 +116,8 @@
         android:layout_weight="6"
         android:orientation="vertical"
         android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp">
+        android:layout_marginRight="15dp"
+        android:visibility="gone">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -173,7 +176,7 @@
             android:gravity="center"
             android:background="@drawable/button_bg"
             android:textColor="@color/colorWhite"
-            android:text="扫描TID"
+            android:text="扫描"
             android:textSize="15dp"
             android:textStyle="bold"/>
 
@@ -187,7 +190,7 @@
             android:gravity="center"
             android:background="@drawable/button_bg"
             android:textColor="@color/colorWhite"
-            android:text="清空TID"
+            android:text="清空"
             android:textSize="15dp"
             android:textStyle="bold"/>
 

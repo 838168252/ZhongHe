@@ -104,7 +104,7 @@
             android:gravity="left"
             android:lines="1"
             android:padding="1dp"
-            android:text="其他（包含未入库,已出库）："
+            android:text="其他（包含未绑定,未入库,已出库）："
             android:textColor="@color/color7474"
             android:textSize="15sp"
             android:textStyle="bold" />
@@ -181,7 +181,7 @@
             android:gravity="center"
             android:background="@drawable/button_bg"
             android:textColor="@color/colorWhite"
-            android:text="扫描"
+            android:text="扫描TID"
             android:textSize="15dp"
             android:textStyle="bold"/>
 

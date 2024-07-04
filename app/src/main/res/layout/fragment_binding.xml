@@ -37,12 +37,17 @@
             android:layout_toRightOf="@+id/textView1"
             android:background="@color/color7474" />
 
-        <Spinner
+        <EditText
             android:id="@+id/b_TID"
             android:spinnerMode="dialog"
             android:layout_width="240dp"
             android:layout_height="match_parent"
-            android:textSize="12sp"/>
+            android:background="@null"
+            android:ems="19"
+            android:gravity="center"
+            android:padding="1dp"
+            android:text=""
+            android:textSize="17sp" />
 
         <Button
             android:id="@+id/b_scan"

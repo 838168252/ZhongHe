@@ -55,8 +55,8 @@ public class App extends Application {
         if (currentApiVersion > Build.VERSION_CODES.N) {
             // For Android10.0 module
             scanUtil = ScanUtil.getInstance(this);
-//            scanUtil.disableScanKey("134");
-//            scanUtil.disableScanKey("137");
+            scanUtil.disableScanKey("134");
+            scanUtil.disableScanKey("137");
             scanUtil.setBarcodeSendMode(0);//设置为广播
         }
     }
@@ -74,9 +74,9 @@ public class App extends Application {
             if (err == Reader.READER_ERR.MT_OK_ERR) {
                 isConnectUHF = true;
                 Reader.READER_ERR err1 = mUhfrManager.setRegion(Reader.Region_Conf.valueOf(sharedUtil.getWorkFreq()));
-                Toast.makeText(getApplicationContext(), "FreRegion:" + Reader.Region_Conf.valueOf(sharedUtil.getWorkFreq()) +
-                        "\n" + "Read Power:" + sharedUtil.getPower() +
-                        "\n" + "Write Power:" + sharedUtil.getPower(), Toast.LENGTH_LONG).show();
+//                Toast.makeText(getApplicationContext(), "FreRegion:" + Reader.Region_Conf.valueOf(sharedUtil.getWorkFreq()) +
+//                        "\n" + "Read Power:" + sharedUtil.getPower() +
+//                        "\n" + "Write Power:" + sharedUtil.getPower(), Toast.LENGTH_LONG).show();
                 setParam();
                 if (mUhfrManager.getHardware().equals("1.1.01")) {
                     type = 0;
@@ -88,9 +88,10 @@ public class App extends Application {
                 if (err1 == Reader.READER_ERR.MT_OK_ERR) {
                     isConnectUHF = true;
                     mUhfrManager.setRegion(Reader.Region_Conf.valueOf(mSharedPreferences.getInt("freRegion", 1)));
-                    Toast.makeText(getApplicationContext(), "FreRegion:" + Reader.Region_Conf.valueOf(mSharedPreferences.getInt("freRegion", 1)) +
-                            "\n" + "Read Power:" + 30 +
-                            "\n" + "Write Power:" + 30, Toast.LENGTH_LONG).show();
+//                    Toast.makeText(getApplicationContext(), "FreRegion:" + Reader.Region_Conf.valueOf(mSharedPreferences.getInt("freRegion", 1))
+//                            +
+//                            "\n" + "Read Power:" + 30 +
+//                            "\n" + "Write Power:" + 30, Toast.LENGTH_LONG).show();
                     setParam();
                 } else {
                     CommonUtils.showShorMsg(this, "模块初始失败");
@@ -119,8 +120,8 @@ public class App extends Application {
         if (currentApiVersion > Build.VERSION_CODES.N) {
             // For Android10.0 module
             scanUtil = ScanUtil.getInstance(this);
-//            scanUtil.enableScanKey("134");
-//            scanUtil.enableScanKey("137");
+            scanUtil.enableScanKey("134");
+            scanUtil.enableScanKey("137");
             scanUtil.setBarcodeSendMode(1);//设置为焦点
         }
         try {
