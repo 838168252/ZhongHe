@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.zhonghe.Adapter.dataBAdapter;
 import com.example.zhonghe.Adapter.dataBtn2ClickListener;
@@ -67,6 +68,10 @@ public class enterFragment extends BaseFragment implements View.OnClickListener 
     EditText eQR;
     @BindView(R.id.e_search)
     Button eSearch;
+    @BindView(R.id.e_amount1)
+    TextView eAmount1;
+    @BindView(R.id.e_amount2)
+    TextView eAmount2;
     //弹窗
     private EditText in_batch_B;
     private Button in_but1_B, in_but2_B;
@@ -154,6 +159,7 @@ public class enterFragment extends BaseFragment implements View.OnClickListener 
     //列表显示数据适配器A
     private void ListViewA() {
         if (dataList != null) {
+            eAmount1.setText(dataList.size()+"");
             adapter = new dataBAdapter(mainActivity, dataList);
             eListA.setAdapter(adapter);
         }
@@ -169,6 +175,7 @@ public class enterFragment extends BaseFragment implements View.OnClickListener 
     //列表显示数据适配器B
     private void ListViewB() {
         if (das != null) {
+            eAmount2.setText(das.size()+"");
             elseAdapter = new elseAdapter(mainActivity, das);
             elistB.setAdapter(elseAdapter);
         }
@@ -276,6 +283,8 @@ public class enterFragment extends BaseFragment implements View.OnClickListener 
             }
             adapter.notifyDataSetChanged();//刷新adapter
             elseAdapter.notifyDataSetChanged();
+            eAmount1.setText(dataList.size()+"");
+            eAmount2.setText(dasM.size()+"");
             handler1.postDelayed(runnable_MainActivity, 0);
         }
     };
@@ -331,6 +340,8 @@ public class enterFragment extends BaseFragment implements View.OnClickListener 
         dataList.clear();
         eQR.setText("");
         adapter.notifyDataSetChanged();
+        eAmount1.setText(dataList.size()+"");
+        eAmount2.setText(dasM.size()+"");
     }
 
     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -464,6 +475,8 @@ public class enterFragment extends BaseFragment implements View.OnClickListener 
         das.addAll(dasM.values());
         adapter.notifyDataSetChanged();//刷新adapter
         elseAdapter.notifyDataSetChanged();
+        eAmount1.setText(dataList.size()+"");
+        eAmount2.setText(dasM.size()+"");
     }
 
     //设置功率

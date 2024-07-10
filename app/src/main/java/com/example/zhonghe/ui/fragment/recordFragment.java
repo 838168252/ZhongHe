@@ -40,6 +40,8 @@ import com.example.zhonghe.util.CommonUtils;
 import com.example.zhonghe.util.FileChooseUtil;
 import com.example.zhonghe.util.ScanUtil;
 import com.example.zhonghe.util.SheetHelper;
+import com.example.zhonghe.util.Util;
+import com.uhf.api.cls.Reader;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -48,6 +50,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cn.pda.serialport.Tools;
 
 
 public class recordFragment extends BaseFragment {
@@ -230,7 +233,6 @@ public class recordFragment extends BaseFragment {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     //导入
@@ -345,6 +347,7 @@ public class recordFragment extends BaseFragment {
             if (data != null) {
                 String barcode = new String(data);
                 if (barcode.length() != 0 && barcode != null) {
+                    rQr.setText(barcode);
                     getQR(barcode);
                 }
             }
@@ -395,10 +398,25 @@ public class recordFragment extends BaseFragment {
                         break;
                     case KeyEvent.KEYCODE_F4://6100
                     case KeyEvent.KEYCODE_F7://H3100
-                        scanUtil.startScan();//二维扫描
+                        GetTid();
                         break;
                 }
             }
+        }
+    }
+
+    private void GetTid() {
+        if (App.mUhfrManager == null) {
+            CommonUtils.showShorMsg(mainActivity, "通讯超时");
+            return;
+        }
+        List<Reader.TAGINFO> listTag;
+        listTag = App.mUhfrManager.tagEpcTidInventoryByTimer((short) 50);//开始读卡
+        if (listTag != null && !listTag.isEmpty()) {
+            Util.play(1, 0);//声音
+            String tid = Tools.Bytes2HexString(listTag.get(0).EmbededData, listTag.get(0).EmbededData.length);
+            rQr.setText(tid);
+            getQR(tid);
         }
     }
 }

@@ -118,7 +118,7 @@ public class dataDao {
     public List<data> getDatas(String qr){
         List<data> list = new ArrayList<>();
         db = sqLhelper.getWritableDatabase();
-        Cursor cursor = db.rawQuery("select * from datas where QR like ?", new String[]{"%"+ String.valueOf(qr)+"%"});
+        Cursor cursor = db.rawQuery("select * from datas where QR like ? OR TID like ?", new String[]{"%"+ String.valueOf(qr)+"%","%"+ String.valueOf(qr)+"%"});
         while (cursor.moveToNext()) {
             list.add(new data(
                     cursor.getInt(cursor.getColumnIndex("id")),

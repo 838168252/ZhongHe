@@ -374,7 +374,7 @@ public class bindingFragment extends BaseFragment {
         String type = bType.getText().toString().trim();
         String comment = bComment.getText().toString().trim();
 
-        if (Tid.length() > 0 && Tid != null && QR.length() > 0 && QR != null) {
+        if (Tid.length() > 0 && Tid != null) {
             data da = new data();
             da.setTID(Tid);
             da.setQR(QR);

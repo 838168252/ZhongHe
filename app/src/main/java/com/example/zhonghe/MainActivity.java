@@ -66,6 +66,31 @@ public class MainActivity extends AppCompatActivity implements NavigationView. O
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.binding:
+                navController.navigate(R.id.binding);
+                break ;
+            case R.id.substitute:
+                navController.navigate(R.id.substitute);
+                break;
+            case R.id.enter:
+                navController.navigate(R.id.enter);
+                break;
+            case R.id.leave:
+                navController.navigate(R.id.leave);
+                break;
+            case R.id.record:
+                navController.navigate(R.id.record);
+                break;
+            case R.id.setting:
+                navController.navigate(R.id.setting);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)

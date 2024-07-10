@@ -1,4 +1,4 @@
-package com.example.zhonghe.ui.fragment;
+ package com.example.zhonghe.ui.fragment;
 
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -68,6 +68,10 @@ public class leaveFragment extends BaseFragment {
     EditText lQR;
     @BindView(R.id.l_search)
     Button lSearch;
+    @BindView(R.id.l_amount1)
+    TextView lAmount1;
+    @BindView(R.id.l_amount2)
+    TextView lAmount2;
 
     private MainActivity mainActivity;
     private dataBAdapter adapter;
@@ -127,6 +131,7 @@ public class leaveFragment extends BaseFragment {
     //列表显示数据适配器A
     private void ListViewA() {
         if (dataList != null) {
+            lAmount1.setText(dataList.size()+"");
             adapter = new dataBAdapter(mainActivity, dataList);
             lListA.setAdapter(adapter);
         }
@@ -142,6 +147,7 @@ public class leaveFragment extends BaseFragment {
     //列表显示数据适配器B
     private void ListViewB() {
         if (das != null) {
+            lAmount2.setText(das.size()+"");
             elseAdapter = new elseAdapter(mainActivity, das);
             lListB.setAdapter(elseAdapter);
         }
@@ -252,6 +258,8 @@ public class leaveFragment extends BaseFragment {
             }
             adapter.notifyDataSetChanged();//刷新adapter
             elseAdapter.notifyDataSetChanged();
+            lAmount1.setText(dataList.size()+"");
+            lAmount2.setText(dasM.size()+"");
             handler1.postDelayed(runnable_MainActivity, 0);
         }
     };
@@ -325,6 +333,8 @@ public class leaveFragment extends BaseFragment {
         dataList.clear();
         lQR.setText("");
         adapter.notifyDataSetChanged();
+        lAmount1.setText(dataList.size()+"");
+        lAmount2.setText(dasM.size()+"");
     }
 
     @OnClick(R.id.l_clear)
@@ -440,6 +450,8 @@ public class leaveFragment extends BaseFragment {
         dataList.addAll(dataMap.values());
         adapter.notifyDataSetChanged();//刷新adapter
         elseAdapter.notifyDataSetChanged();
+        lAmount1.setText(dataList.size()+"");
+        lAmount2.setText(dasM.size()+"");
     }
 
     //设置功率
@@ -450,7 +462,7 @@ public class leaveFragment extends BaseFragment {
         }
         power p = SPDataUtils.getInfo(mainActivity);
         err = App.mUhfrManager.setPower(p.getS3(), p.getS3());
-        if (err == Reader.READER_ERR.MT_OK_ERR) {
+        if (err == Reader.READER_ERR.MT_OK_ERR) { 
             sharedUtil.savePower(p.getS3());
         } else {
             //5101 仅支持30db

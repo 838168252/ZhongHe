@@ -60,7 +60,7 @@
                 android:id="@+id/r_QR"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:hint="绑定信息(二维码或手动输入)："
+                android:hint="绑定信息(二维码/TID或手动输入)："
                 android:textSize="15dp"
                 android:background="@null"/>
         </LinearLayout>
