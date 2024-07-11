@@ -3,6 +3,7 @@ package com.example.zhonghe.ui.fragment;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.ContextWrapper;
@@ -23,9 +24,13 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.zhonghe.Adapter.dataBtn2ClickListener;
@@ -44,6 +49,7 @@ import com.example.zhonghe.util.Util;
 import com.uhf.api.cls.Reader;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -53,7 +59,7 @@ import butterknife.OnClick;
 import cn.pda.serialport.Tools;
 
 
-public class recordFragment extends BaseFragment {
+public class recordFragment extends BaseFragment implements View.OnClickListener {
     @BindView(R.id.r_list)
     ListView rList;
     @BindView(R.id.r_bd)
@@ -70,6 +76,8 @@ public class recordFragment extends BaseFragment {
     Button rEnter;
     @BindView(R.id.r_leave)
     Button rLeave;
+    @BindView(R.id.r_filtrate)
+    ImageView rFiltrate;
     private static final int REQUEST_CODE = 1;
     private MainActivity mainActivity;
     private dataDao dataDao;
@@ -80,7 +88,11 @@ public class recordFragment extends BaseFragment {
     private boolean mReceiverTag = false;   //广播接受者标识
     private KeyReceiver keyReceiver;
     private ScanUtil scanUtil;
-
+    private Dialog inputDialog;
+    private Spinner in_type, in_batch;
+    private Button in_but1, in_but2;
+    private String type = "";
+    private String batch = "";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -96,6 +108,7 @@ public class recordFragment extends BaseFragment {
         ButterKnife.bind(this, view);
 
         initView();
+        Dialog();
         showLvData(page);
         return view;
     }
@@ -113,8 +126,23 @@ public class recordFragment extends BaseFragment {
         mainHandler = new Handler();
         //初始化扫描
         scanUtil = ScanUtil.getInstance(mainActivity);
+        //弹窗
+        inputDialog = new Dialog(mainActivity);
+        inputDialog.setContentView(R.layout.inputdialog4);
+        inputDialog.setCanceledOnTouchOutside(false);//点击屏幕dialog不消失
+        inputDialog.setCancelable(false);//点击返回键dialog不消失
 
     }
+
+    private void Dialog() {
+        in_type = inputDialog.findViewById(R.id.in_type);
+        in_batch = inputDialog.findViewById(R.id.in_batch);
+        in_but1 = inputDialog.findViewById(R.id.in_but1);
+        in_but1.setOnClickListener(this);
+        in_but2 = inputDialog.findViewById(R.id.in_but2);
+        in_but2.setOnClickListener(this);
+    }
+
     //显示列表数据的方法
     private void showLvData(int page) {
         if (page == 1) {
@@ -137,6 +165,7 @@ public class recordFragment extends BaseFragment {
             ListViewA(list);
         }
     }
+
     //列表显示数据适配器
     private void ListViewA(List<data> data) {
         if (data != null) {
@@ -151,6 +180,7 @@ public class recordFragment extends BaseFragment {
             }
         });
     }
+
     //确认提示框
     private void Tooltip(String item) {
         new AlertDialog.Builder(mainActivity).setTitle("确认提示")//设置对话框标题
@@ -167,6 +197,7 @@ public class recordFragment extends BaseFragment {
             }
         }).show();//在按键响应事件中显示此对话框
     }
+
     //删除
     private void remove(String item) {
 
@@ -179,38 +210,49 @@ public class recordFragment extends BaseFragment {
 
         }
     }
+
     @OnClick(R.id.r_bd)
-    public void rbd(){
+    public void rbd() {
         page = 1;
         showLvData(page);
     }
+
     @OnClick(R.id.r_rk)
-    public void rrk(){
+    public void rrk() {
         page = 2;
         showLvData(page);
     }
+
     @OnClick(R.id.r_ck)
-    public void rck(){
+    public void rck() {
         page = 3;
         showLvData(page);
     }
+
     @OnClick(R.id.r_leave)
-    public void rLeave(){
+    public void rLeave() {
         fab_excel();
     }
+
     @OnClick(R.id.r_enter)
-    public void rEnter(){
+    public void rEnter() {
         excel_to_channel();
     }
+
     @OnClick(R.id.r_search)
-    public void rSearch(){
+    public void rSearch() {
         search();
     }
+
     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
 
     //导出
     public void fab_excel() {
         List<data> list = dataDao.all();
+        if (list == null || list.size() == 0) {
+            CommonUtils.showShorMsg(mainActivity, "本地库为空,导出失败");
+            return;
+        }
         try {
             String[] PERMISSIONS_STORAGE = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
             int permission = ActivityCompat.checkSelfPermission(mainActivity, "android.permission.WRITE_EXTERNAL_STORAGE");
@@ -309,7 +351,7 @@ public class recordFragment extends BaseFragment {
             } else {
                 CommonUtils.showShorMsg(mainActivity, "未查询出信息!");
             }
-        }else {
+        } else {
             CommonUtils.showShorMsg(mainActivity, "搜索内容不可为空!");
 
         }
@@ -353,6 +395,7 @@ public class recordFragment extends BaseFragment {
             }
         }
     };
+
     //根据QR查询本地库
     private void getQR(String qr) {
         List<data> list = dataDao.getDatas(qr);
@@ -371,6 +414,18 @@ public class recordFragment extends BaseFragment {
         filter.addAction("android.rfid.FUN_KEY");
         filter.addAction("android.intent.action.FUN_KEY");
         mainActivity.registerReceiver(keyReceiver, filter);
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.in_but1:
+                datas();
+                break;
+            case R.id.in_but2:
+                inputDialog.dismiss();
+                break;
+        }
     }
 
     //key receiver
@@ -417,6 +472,98 @@ public class recordFragment extends BaseFragment {
             String tid = Tools.Bytes2HexString(listTag.get(0).EmbededData, listTag.get(0).EmbededData.length);
             rQr.setText(tid);
             getQR(tid);
+        }
+    }
+
+    //筛选
+    @OnClick(R.id.r_filtrate)
+    public void filtrate() {
+        if (!mainActivity.isFinishing()) {
+            inputDialog.show();
+            List<String> listA = new ArrayList<>();
+            listA.add("空");
+            listA.addAll(dataDao.typeAll());
+            List<String> listB = new ArrayList<>();
+            listB.add("空");
+            listB.addAll(dataDao.batchAll());
+            spinnerA(listA);
+            spinnerB(listB);
+        }
+    }
+
+    //        下拉框A
+    private void spinnerA(List<String> list) {
+        if (null != list && list.size() > 0) {
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(mainActivity, android.R.layout.simple_spinner_item, list);
+            adapter.setDropDownViewResource(android.R.layout.simple_list_item_single_choice);
+            in_type.setAdapter(adapter);
+
+            in_type.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
+                    //获取Spinner控件的适配器
+                    ArrayAdapter<String> adapter = (ArrayAdapter<String>) adapterView.getAdapter();
+                    type = adapter.getItem(i);
+                }
+
+                //没有选中时的处理
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
+                }
+            });
+        } else {
+            CommonUtils.showShorMsg(mainActivity, "没有搜索到");
+            return;
+        }
+    }
+
+    //        下拉框B
+    private void spinnerB(List<String> list) {
+        if (null != list && list.size() > 0) {
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(mainActivity, android.R.layout.simple_spinner_item, list);
+            adapter.setDropDownViewResource(android.R.layout.simple_list_item_single_choice);
+            in_batch.setAdapter(adapter);
+
+            in_batch.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
+                    //获取Spinner控件的适配器
+                    ArrayAdapter<String> adapter = (ArrayAdapter<String>) adapterView.getAdapter();
+                    batch = adapter.getItem(i);
+                }
+
+                //没有选中时的处理
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
+                }
+            });
+        } else {
+            CommonUtils.showShorMsg(mainActivity, "没有搜索到");
+            return;
+        }
+    }
+
+    //type/batch查询
+    private void datas() {
+        List<data> list = new ArrayList<>();
+        if (type.equals("空") && batch.equals("空")) {
+            CommonUtils.showShorMsg(mainActivity, "筛选条件不可全为空");
+            return;
+        }
+        if (type.equals("空")) {
+            list = dataDao.Datas("", batch);
+        } else if (batch.equals("空")) {
+            list = dataDao.Datas(type, "");
+        } else {
+            list = dataDao.Datas(type, batch);
+        }
+        if (list != null && list.size() > 0) {
+            ListViewA(list);
+            inputDialog.dismiss();
+        } else {
+            CommonUtils.showShorMsg(mainActivity, "未查询出信息!");
         }
     }
 }

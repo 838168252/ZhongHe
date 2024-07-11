@@ -342,7 +342,6 @@ public class bindingFragment extends BaseFragment {
                     case KeyEvent.KEYCODE_F3://C510x
                         break;
                     case KeyEvent.KEYCODE_F4://6100
-                        break;
                     case KeyEvent.KEYCODE_F7://H3100
                         invenroty();
                         break;

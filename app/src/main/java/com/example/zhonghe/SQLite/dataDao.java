@@ -114,7 +114,7 @@ public class dataDao {
         return da;
     }
 
-    //根据QR查询本地信息
+    //根据QR/Tid查询本地信息
     public List<data> getDatas(String qr){
         List<data> list = new ArrayList<>();
         db = sqLhelper.getWritableDatabase();
@@ -175,6 +175,48 @@ public class dataDao {
         List<data> list = new ArrayList<>();
         db = sqLhelper.getWritableDatabase();
         Cursor cursor = db.rawQuery("select * from datas where condition = ?", new String[]{String.valueOf(condition)});
+        while (cursor.moveToNext()) {
+            list.add(new data(
+                    cursor.getInt(cursor.getColumnIndex("id")),
+                    cursor.getString(cursor.getColumnIndex("TID")),
+                    cursor.getString(cursor.getColumnIndex("QR")),
+                    cursor.getString(cursor.getColumnIndex("batch")),
+                    cursor.getString(cursor.getColumnIndex("type")),
+                    cursor.getString(cursor.getColumnIndex("comment")),
+                    cursor.getString(cursor.getColumnIndex("time")),
+                    cursor.getString(cursor.getColumnIndex("condition"))
+            ));
+        }
+        return list;
+    }
+
+    //查询所有batch
+    @SuppressLint("Range")
+    public List<String> batchAll() {
+        List<String> list = new ArrayList<>();
+        db = sqLhelper.getWritableDatabase();
+        Cursor cursor = db.rawQuery("select DISTINCT  batch from datas ", null);
+        while (cursor.moveToNext()) {
+            list.add( cursor.getString(cursor.getColumnIndex("batch")));
+        }
+        return list;
+    }
+    //查询所有type
+    @SuppressLint("Range")
+    public List<String> typeAll() {
+        List<String> list = new ArrayList<>();
+        db = sqLhelper.getWritableDatabase();
+        Cursor cursor = db.rawQuery("select DISTINCT  type from datas ", null);
+        while (cursor.moveToNext()) {
+            list.add( cursor.getString(cursor.getColumnIndex("type")));
+        }
+        return list;
+    }
+    //根据type/batch查询本地信息
+    public List<data> Datas(String type ,String batch){
+        List<data> list = new ArrayList<>();
+        db = sqLhelper.getWritableDatabase();
+        Cursor cursor = db.rawQuery("select * from datas where type = ? OR batch = ?", new String[]{String.valueOf(type),String.valueOf(batch)});
         while (cursor.moveToNext()) {
             list.add(new data(
                     cursor.getInt(cursor.getColumnIndex("id")),

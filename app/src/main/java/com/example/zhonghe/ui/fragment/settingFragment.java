@@ -321,7 +321,7 @@ public class settingFragment extends BaseFragment {
     private void versionInformation() {
         String strSoft = BuildConfig.VERSION_NAME;
         tvSoft.setText("  " + strSoft);
-        tvDate.setText("  " + "2024-07-09");
+        tvDate.setText("  " + "2024-07-11");
         if (!App.isConnectUHF) {
             CommonUtils.showShorMsg(mainActivity, "通讯超时");
             return;

@@ -179,6 +179,20 @@ public class substituteFragment extends BaseFragment implements View.OnClickList
         }
     }
 
+    private void GetTid2() {
+        if (App.mUhfrManager == null) {
+            CommonUtils.showShorMsg(mainActivity, "通讯超时");
+            return;
+        }
+        List<Reader.TAGINFO> listTag;
+        listTag = App.mUhfrManager.tagEpcTidInventoryByTimer((short) 50);//开始读卡
+        if (listTag != null && !listTag.isEmpty()) {
+            Util.play(1, 0);//声音
+            String tid = Tools.Bytes2HexString(listTag.get(0).EmbededData, listTag.get(0).EmbededData.length);
+            getQr(tid);
+        }
+    }
+
     //列表显示数据适配器A
     private void ListViewA() {
         if (dataList != null) {
@@ -292,17 +306,14 @@ public class substituteFragment extends BaseFragment implements View.OnClickList
 
     @OnClick(R.id.s_scan)
     public void scan() {
-        scanUtil.startScan();//二维扫描
+//        scanUtil.startScan();//二维扫描
+        GetTid2();
     }
 
     private void rfid() {
         //超高频
         if (App.mUhfrManager == null) {
             CommonUtils.showShorMsg(mainActivity, "通讯超时");
-            return;
-        }
-        if (window == false) {
-            CommonUtils.showShorMsg(mainActivity, "请先扫描二维码");
             return;
         }
         if (!isReader) {
@@ -315,7 +326,7 @@ public class substituteFragment extends BaseFragment implements View.OnClickList
     //开始盘存
     private void startScanLabels() {
         handler1.postDelayed(runnable_MainActivity, 0);
-        sScan.setText("结束扫描");
+        sScan.setText("扫描");
         isReader = true;
     }
 
@@ -325,7 +336,7 @@ public class substituteFragment extends BaseFragment implements View.OnClickList
             if (isReader) {
                 handler1.removeCallbacks(runnable_MainActivity);
                 isReader = false;
-                sScan.setText("扫描TID");
+                sScan.setText("扫描");
             }
         } else {
             CommonUtils.showLonMsg(mainActivity, "通讯超时");
@@ -344,13 +355,10 @@ public class substituteFragment extends BaseFragment implements View.OnClickList
             List<Reader.TAGINFO> listTag;
             listTag = App.mUhfrManager.tagEpcTidInventoryByTimer((short) 50);//开始读卡
             if (listTag != null && !listTag.isEmpty()) {
-                for (Reader.TAGINFO taginfo : listTag) {
-                    Map<String, data> infoMap = pooled6cData(taginfo);
-                    das.clear();
-                    das.addAll(infoMap.values());
-                }
+                Util.play(1, 0);//声音
+                String tid = Tools.Bytes2HexString(listTag.get(0).EmbededData, listTag.get(0).EmbededData.length);
+                getQr(tid);
             }
-            elseAdapter.notifyDataSetChanged();
             handler1.postDelayed(runnable_MainActivity, 0);
         }
     };
@@ -411,6 +419,9 @@ public class substituteFragment extends BaseFragment implements View.OnClickList
                 CommonUtils.showShorMsg(mainActivity, "替换成功,请重新扫描");
                 inputDialog.dismiss();
                 initPane();
+            }else {
+                CommonUtils.showShorMsg(mainActivity, "替换失败,请确认此Tid是否已存在");
+                return;
             }
         }else {
             CommonUtils.showShorMsg(mainActivity, "新TID不可为空");
