@@ -87,12 +87,13 @@ public class substituteFragment extends BaseFragment implements View.OnClickList
     private Dialog inputDialog;
     private List<String> tids;
     private String TID = "";
-    private EditText in_TID;
-    private TextView in_TID2;
+    private EditText in_TID, in_QR;
+    private TextView in_TID2, in_QR2;
     private Button in_but1, in_but2, in_but3;
     private ScanUtil scanUtil;
     Reader.READER_ERR err;
     private SharedUtil sharedUtil;
+    private boolean ty = false;
 
     private MainActivity mainActivity;
 
@@ -142,6 +143,8 @@ public class substituteFragment extends BaseFragment implements View.OnClickList
         //弹窗
         in_TID = inputDialog.findViewById(R.id.in_TID);
         in_TID2 = inputDialog.findViewById(R.id.in_TID2);
+        in_QR = inputDialog.findViewById(R.id.in_QR);
+        in_QR2 = inputDialog.findViewById(R.id.in_QR2);
         in_but1 = inputDialog.findViewById(R.id.in_but1);
         in_but1.setOnClickListener(this);
         in_but2 = inputDialog.findViewById(R.id.in_but2);
@@ -157,6 +160,7 @@ public class substituteFragment extends BaseFragment implements View.OnClickList
                 replace();
                 break;
             case R.id.in_but2:
+                ty = false;
                 inputDialog.dismiss();
                 break;
             case R.id.in_but3:
@@ -189,7 +193,12 @@ public class substituteFragment extends BaseFragment implements View.OnClickList
         if (listTag != null && !listTag.isEmpty()) {
             Util.play(1, 0);//声音
             String tid = Tools.Bytes2HexString(listTag.get(0).EmbededData, listTag.get(0).EmbededData.length);
-            getQr(tid);
+            if (ty == true) {
+                in_TID.setText(tid);
+            } else {
+                getQr(tid);
+            }
+
         }
     }
 
@@ -205,8 +214,12 @@ public class substituteFragment extends BaseFragment implements View.OnClickList
                 data item = dataList.get(position);
 
                 if (!mainActivity.isFinishing()) {
+                    ty = true;
                     inputDialog.show();
                     in_TID2.setText(item.getTID() + "");
+                    in_QR2.setText(item.getQR() + "");
+                    in_TID.setText("");
+                    in_QR.setText("");
 //                    spinner();
                 }
             }
@@ -413,18 +426,30 @@ public class substituteFragment extends BaseFragment implements View.OnClickList
     private void replace() {
         String j = in_TID.getText().toString().trim();
         String i = in_TID2.getText().toString().trim();
-        if (j != null && j.length() > 0) {
-            int a = dataDao.batch3(i, j);
+        String q = in_QR.getText().toString().trim();
+        if (j != null && j.length() > 0 || q != null && q.length() > 0) {
+            int a = 0;
+            if (j.length() > 0 && q.length() == 0) {
+                a = dataDao.batch3(i, j);
+            }
+            if (q.length() > 0 && j.length() == 0) {
+                a = dataDao.batch4(i,q);
+            }
+            if (q.length() > 0 && j.length() > 0) {
+                a = dataDao.batch5(i,q,j);
+            }
+
             if (a > 0) {
                 CommonUtils.showShorMsg(mainActivity, "替换成功,请重新扫描");
+                ty = false;
                 inputDialog.dismiss();
                 initPane();
-            }else {
+            } else {
                 CommonUtils.showShorMsg(mainActivity, "替换失败,请确认此Tid是否已存在");
                 return;
             }
-        }else {
-            CommonUtils.showShorMsg(mainActivity, "新TID不可为空");
+        } else {
+            CommonUtils.showShorMsg(mainActivity, "新TID或新二维码不可为空");
             return;
         }
 
@@ -507,8 +532,12 @@ public class substituteFragment extends BaseFragment implements View.OnClickList
             if (data != null) {
                 String barcode = new String(data);
                 if (barcode.length() != 0 && barcode != null) {
-                    sQR.setText(barcode);
-                    getQr(barcode);
+                    if (ty == true) {
+                        in_QR.setText(barcode);
+                    } else {
+                        sQR.setText(barcode);
+                        getQr(barcode);
+                    }
                 }
             }
         }
@@ -540,8 +569,9 @@ public class substituteFragment extends BaseFragment implements View.OnClickList
             }
         }, 2000); //延时2秒
     }
+
     //设置功率
-    private void setPower(){
+    private void setPower() {
         if (!App.isConnectUHF) {
             CommonUtils.showShorMsg(mainActivity, "通讯超时");
             return;

@@ -9,8 +9,21 @@ public class data {
     private String comment;
     private String time;
     private String condition;
+    private Boolean checked;
 
     public data() {
+    }
+
+    public data(int id, String TID, String QR, String batch, String type, String comment, String time, String condition, Boolean checked) {
+        this.id = id;
+        this.TID = TID;
+        this.QR = QR;
+        this.batch = batch;
+        this.type = type;
+        this.comment = comment;
+        this.time = time;
+        this.condition = condition;
+        this.checked = checked;
     }
 
     public data(int id, String TID, String QR, String batch, String type, String comment, String time, String condition) {
@@ -86,6 +99,14 @@ public class data {
 
     public void setCondition(String condition) {
         this.condition = condition;
+    }
+
+    public Boolean getChecked() {
+        return checked;
+    }
+
+    public void setChecked(Boolean checked) {
+        this.checked = checked;
     }
 
     @Override

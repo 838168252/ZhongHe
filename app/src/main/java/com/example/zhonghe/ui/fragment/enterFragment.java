@@ -10,7 +10,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 
-import androidx.fragment.app.Fragment;
 
 import android.os.Handler;
 import android.text.TextUtils;
@@ -20,9 +19,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.zhonghe.Adapter.dataBAdapter;
 import com.example.zhonghe.Adapter.dataBtn2ClickListener;
@@ -39,6 +41,8 @@ import com.example.zhonghe.util.SPDataUtils;
 import com.example.zhonghe.util.ScanUtil;
 import com.example.zhonghe.util.SharedUtil;
 import com.uhf.api.cls.Reader;
+
+import org.w3c.dom.ls.LSOutput;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -72,6 +76,12 @@ public class enterFragment extends BaseFragment implements View.OnClickListener 
     TextView eAmount1;
     @BindView(R.id.e_amount2)
     TextView eAmount2;
+    @BindView(R.id.che_all)
+    CheckBox cheAll;
+    @BindView(R.id.e_delete)
+    Button eDelete;
+    @BindView(R.id.hide)
+    TextView hide;
     //弹窗
     private EditText in_batch_B;
     private Button in_but1_B, in_but2_B;
@@ -113,6 +123,7 @@ public class enterFragment extends BaseFragment implements View.OnClickListener 
         ListViewA();
         ListViewB();
         setPower();
+        initlistener();
         return view;
     }
 
@@ -130,9 +141,13 @@ public class enterFragment extends BaseFragment implements View.OnClickListener 
         filter.addAction("com.rfid.SCAN");//getStringExtra的参数
         mReceiverQR = true;
         contextWrapper.registerReceiver(receiver, filter);
+
         //初始化扫描
         scanUtil = ScanUtil.getInstance(mainActivity);
         sharedUtil = new SharedUtil(mainActivity);
+        //隐藏控件
+        cheAll.setVisibility(View.INVISIBLE);
+        eDelete.setVisibility(View.INVISIBLE);
     }
 
     private void Dialog() {
@@ -159,23 +174,16 @@ public class enterFragment extends BaseFragment implements View.OnClickListener 
     //列表显示数据适配器A
     private void ListViewA() {
         if (dataList != null) {
-            eAmount1.setText(dataList.size()+"");
-            adapter = new dataBAdapter(mainActivity, dataList);
+            eAmount1.setText(dataList.size() + "");
+            adapter = new dataBAdapter(eListA, mainActivity, dataList);
             eListA.setAdapter(adapter);
         }
-        adapter.setDataBtn2ClickListener(new dataBtn2ClickListener() {
-            @Override
-            public void dataBtn2ClickListener(View view, int position) {
-                data item = dataList.get(position);
-                Tooltip(item.getTID());
-            }
-        });
     }
 
     //列表显示数据适配器B
     private void ListViewB() {
         if (das != null) {
-            eAmount2.setText(das.size()+"");
+            eAmount2.setText(das.size() + "");
             elseAdapter = new elseAdapter(mainActivity, das);
             elistB.setAdapter(elseAdapter);
         }
@@ -228,6 +236,71 @@ public class enterFragment extends BaseFragment implements View.OnClickListener 
         uhf();
     }
 
+    /**
+     * 初始化事件监听方法
+     */
+    private void initlistener() {
+        /**
+         * 全选复选框设置事件监听
+         */
+        cheAll.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (dataList.size() != 0) {//判断列表中是否有数据
+                    if (isChecked) {
+                        for (int i = 0; i < dataList.size(); i++) {
+                            dataList.get(i).setChecked(true);
+                        }
+                        //通知适配器更新UI
+                        adapter.notifyDataSetChanged();
+                    } else {
+                        for (int i = 0; i < dataList.size(); i++) {
+                            dataList.get(i).setChecked(false);
+                        }
+                        //通知适配器更新UI
+                        adapter.notifyDataSetChanged();
+                    }
+                }
+//                else {//若列表中没有数据则隐藏全选复选框
+//                    cheAll.setVisibility(View.GONE);
+//                }
+            }
+        });
+        //删除按钮点击事件
+        eDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //创建一个要删除内容的集合，不能直接在数据源data集合中直接进行操作，否则会报异常
+                List<data> deleSelect = new ArrayList<data>();
+
+                //把选中的条目要删除的条目放在deleSelect这个集合中
+                for (int i = 0; i < dataList.size(); i++) {
+                    if (dataList.get(i).getChecked()) {
+                        dataMap.remove(dataList.get(i).getTID());//删除Map中的元素
+                        deleSelect.add(dataList.get(i));
+                    }
+                }
+                //判断用户是否选中要删除的数据及是否有数据
+                if (deleSelect.size() != 0 && dataList.size() != 0) {
+                    //从数据源data中删除数据
+                    dataList.removeAll(deleSelect);
+                    eAmount1.setText(dataList.size() + "");
+                    //把deleSelect集合中的数据清空
+                    deleSelect.clear();
+                    //把全选复选框设置为false
+                    cheAll.setChecked(false);
+                    //通知适配器更新UI
+                    adapter.notifyDataSetChanged();
+                } else if (dataList.size() == 0) {
+                    CommonUtils.showShorMsg(mainActivity, "没有要删除的数据");
+                } else if (deleSelect.size() == 0) {
+                    CommonUtils.showShorMsg(mainActivity, "请选中要删除的数据");
+                }
+            }
+        });
+
+    }
+
     private void uhf() {
         //超高频
         if (App.mUhfrManager == null) {
@@ -244,7 +317,7 @@ public class enterFragment extends BaseFragment implements View.OnClickListener 
     //开始盘存
     private void startScanLabels() {
         handler1.postDelayed(runnable_MainActivity, 0);
-        eScan.setText("结束扫描");
+        eScan.setText("结束");
         isReader = true;
     }
 
@@ -254,7 +327,7 @@ public class enterFragment extends BaseFragment implements View.OnClickListener 
             if (isReader) {
                 handler1.removeCallbacks(runnable_MainActivity);
                 isReader = false;
-                eScan.setText("扫描TID");
+                eScan.setText("扫描");
             }
         } else {
             CommonUtils.showLonMsg(mainActivity, "通讯超时");
@@ -283,8 +356,8 @@ public class enterFragment extends BaseFragment implements View.OnClickListener 
             }
             adapter.notifyDataSetChanged();//刷新adapter
             elseAdapter.notifyDataSetChanged();
-            eAmount1.setText(dataList.size()+"");
-            eAmount2.setText(dasM.size()+"");
+            eAmount1.setText(dataList.size() + "");
+            eAmount2.setText(dasM.size() + "");
             handler1.postDelayed(runnable_MainActivity, 0);
         }
     };
@@ -306,6 +379,7 @@ public class enterFragment extends BaseFragment implements View.OnClickListener 
         if (dataMap.containsKey(epcAndTid)) {
         } else {
             data tag = dataDao.getData(epcAndTid);
+            tag.setChecked(false);
             if (tag == null || tag.getId() == 0) {
                 data da = new data();
                 da.setTID(epcAndTid);
@@ -329,6 +403,16 @@ public class enterFragment extends BaseFragment implements View.OnClickListener 
         }
     }
 
+    @OnClick(R.id.hide)
+    public void hide() {
+        boolean isShow = adapter.isShow();
+        adapter.setShow(!isShow);
+        adapter.notifyDataSetChanged();
+        cheAll.setVisibility(View.GONE);
+        HideAndShow(isShow);
+    }
+
+
     @OnClick(R.id.e_clear)
     public void clear() {
         initPane();
@@ -340,8 +424,8 @@ public class enterFragment extends BaseFragment implements View.OnClickListener 
         dataList.clear();
         eQR.setText("");
         adapter.notifyDataSetChanged();
-        eAmount1.setText(dataList.size()+"");
-        eAmount2.setText(dasM.size()+"");
+        eAmount1.setText(dataList.size() + "");
+        eAmount2.setText(dasM.size() + "");
     }
 
     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -463,6 +547,7 @@ public class enterFragment extends BaseFragment implements View.OnClickListener 
         dataList.clear();
         das.clear();
         for (int i = 0; i < list.size(); i++) {
+            list.get(i).setChecked(false);//给复选框状态为false
             if (list.get(i).getId() != 0 && list.get(i).getCondition().equals("已入库")) {
                 dasM.put(list.get(i).getTID(), list.get(i));
             } else if (list.get(i).getId() != 0 && list.get(i).getCondition().equals("已出库")) {
@@ -475,12 +560,12 @@ public class enterFragment extends BaseFragment implements View.OnClickListener 
         das.addAll(dasM.values());
         adapter.notifyDataSetChanged();//刷新adapter
         elseAdapter.notifyDataSetChanged();
-        eAmount1.setText(dataList.size()+"");
-        eAmount2.setText(dasM.size()+"");
+        eAmount1.setText(dataList.size() + "");
+        eAmount2.setText(dasM.size() + "");
     }
 
     //设置功率
-    private void setPower(){
+    private void setPower() {
         if (!App.isConnectUHF) {
             CommonUtils.showShorMsg(mainActivity, "通讯超时");
             return;
@@ -493,5 +578,18 @@ public class enterFragment extends BaseFragment implements View.OnClickListener 
             //5101 仅支持30db
             CommonUtils.showShorMsg(mainActivity, "功率设置失败");
         }
+    }
+
+    private void HideAndShow(boolean t) {
+        if (t) {
+            //隐藏控件
+            cheAll.setVisibility(View.INVISIBLE);
+            eDelete.setVisibility(View.INVISIBLE);
+        } else {
+            //显示控件
+            cheAll.setVisibility(View.VISIBLE);
+            eDelete.setVisibility(View.VISIBLE);
+        }
+
     }
 }

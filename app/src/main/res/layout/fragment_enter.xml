@@ -93,6 +93,30 @@
             android:textColor="@color/color7474"
             android:textSize="15sp"
             android:textStyle="bold" />
+        <CheckBox
+            android:id="@+id/che_all"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="100dp"
+            android:text="全选"
+            android:textColor="@color/color7474"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/hide"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="40dp"
+            android:gravity="left"
+            android:lines="1"
+            android:padding="1dp"
+            android:text="管理"
+            android:textColor="@color/purple_500"
+            android:textSize="15sp"
+            android:textStyle="bold" />
     </LinearLayout>
     <LinearLayout
         android:layout_height="0dp"
@@ -230,7 +254,7 @@
             android:gravity="center"
             android:background="@drawable/button_bg"
             android:textColor="@color/colorWhite"
-            android:text="扫描TID"
+            android:text="扫描"
             android:textSize="15dp"
             android:textStyle="bold"/>
 
@@ -243,7 +267,7 @@
             android:gravity="center"
             android:background="@drawable/button_bg"
             android:textColor="@color/colorWhite"
-            android:text="批量入库"
+            android:text="入库"
             android:textSize="15dp"
             android:textStyle="bold" />
 
@@ -253,11 +277,23 @@
             android:layout_height="match_parent"
             android:layout_weight="0.5"
             android:layout_marginLeft="20dp"
+            android:gravity="center"
+            android:background="@drawable/button_bg"
+            android:textColor="@color/colorWhite"
+            android:text="清空"
+            android:textSize="15dp"
+            android:textStyle="bold"/>
+        <Button
+            android:id="@+id/e_delete"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:gravity="center"
             android:background="@drawable/button_bg"
             android:textColor="@color/colorWhite"
-            android:text="清空TID"
+            android:text="删除"
             android:textSize="15dp"
             android:textStyle="bold"/>
 

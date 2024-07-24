@@ -19,6 +19,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -72,6 +74,12 @@ public class leaveFragment extends BaseFragment {
     TextView lAmount1;
     @BindView(R.id.l_amount2)
     TextView lAmount2;
+    @BindView(R.id.che_all)
+    CheckBox cheAll;
+    @BindView(R.id.l_delete)
+    Button lDelete;
+    @BindView(R.id.hide)
+    TextView hide;
 
     private MainActivity mainActivity;
     private dataBAdapter adapter;
@@ -110,6 +118,7 @@ public class leaveFragment extends BaseFragment {
         ListViewA();
         ListViewB();
         setPower();
+        initlistener();
         return view;
     }
 
@@ -125,6 +134,9 @@ public class leaveFragment extends BaseFragment {
         //初始化扫描
         scanUtil = ScanUtil.getInstance(mainActivity);
         sharedUtil = new SharedUtil(mainActivity);
+        //隐藏控件
+        cheAll.setVisibility(View.INVISIBLE);
+        lDelete.setVisibility(View.INVISIBLE);
 
     }
 
@@ -132,16 +144,9 @@ public class leaveFragment extends BaseFragment {
     private void ListViewA() {
         if (dataList != null) {
             lAmount1.setText(dataList.size()+"");
-            adapter = new dataBAdapter(mainActivity, dataList);
+            adapter = new dataBAdapter(lListA,mainActivity, dataList);
             lListA.setAdapter(adapter);
         }
-        adapter.setDataBtn2ClickListener(new dataBtn2ClickListener() {
-            @Override
-            public void dataBtn2ClickListener(View view, int position) {
-                data item = dataList.get(position);
-                Tooltip(item.getTID());
-            }
-        });
     }
 
     //列表显示数据适配器B
@@ -198,6 +203,70 @@ public class leaveFragment extends BaseFragment {
 //        scanUtil.startScan();//二维扫描
         uhf();
     }
+    /**
+     * 初始化事件监听方法
+     */
+    private void initlistener() {
+        /**
+         * 全选复选框设置事件监听
+         */
+        cheAll.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (dataList.size() != 0) {//判断列表中是否有数据
+                    if (isChecked) {
+                        for (int i = 0; i < dataList.size(); i++) {
+                            dataList.get(i).setChecked(true);
+                        }
+                        //通知适配器更新UI
+                        adapter.notifyDataSetChanged();
+                    } else {
+                        for (int i = 0; i < dataList.size(); i++) {
+                            dataList.get(i).setChecked(false);
+                        }
+                        //通知适配器更新UI
+                        adapter.notifyDataSetChanged();
+                    }
+                }
+//                else {//若列表中没有数据则隐藏全选复选框
+//                    cheAll.setVisibility(View.GONE);
+//                }
+            }
+        });
+        //删除按钮点击事件
+        lDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //创建一个要删除内容的集合，不能直接在数据源data集合中直接进行操作，否则会报异常
+                List<data> deleSelect = new ArrayList<data>();
+
+                //把选中的条目要删除的条目放在deleSelect这个集合中
+                for (int i = 0; i < dataList.size(); i++) {
+                    if (dataList.get(i).getChecked()) {
+                        dataMap.remove(dataList.get(i).getTID());//删除Map中的元素
+                        deleSelect.add(dataList.get(i));
+                    }
+                }
+                //判断用户是否选中要删除的数据及是否有数据
+                if (deleSelect.size() != 0 && dataList.size() != 0) {
+                    //从数据源data中删除数据
+                    dataList.removeAll(deleSelect);
+                    lAmount1.setText(dataList.size() + "");
+                    //把deleSelect集合中的数据清空
+                    deleSelect.clear();
+                    //把全选复选框设置为false
+                    cheAll.setChecked(false);
+                    //通知适配器更新UI
+                    adapter.notifyDataSetChanged();
+                } else if (dataList.size() == 0) {
+                    CommonUtils.showShorMsg(mainActivity, "没有要删除的数据");
+                } else if (deleSelect.size() == 0) {
+                    CommonUtils.showShorMsg(mainActivity, "请选中要删除的数据");
+                }
+            }
+        });
+
+    }
 
     private void uhf() {
         if (patternType == 0) {
@@ -219,7 +288,7 @@ public class leaveFragment extends BaseFragment {
     //开始盘存
     private void startScanLabels() {
         handler1.postDelayed(runnable_MainActivity, 0);
-        lScan.setText("结束扫描");
+        lScan.setText("结束");
         isReader = true;
     }
 
@@ -229,7 +298,7 @@ public class leaveFragment extends BaseFragment {
             if (isReader) {
                 handler1.removeCallbacks(runnable_MainActivity);
                 isReader = false;
-                lScan.setText("扫描TID");
+                lScan.setText("扫描");
             }
         } else {
             CommonUtils.showLonMsg(mainActivity, "通讯超时");
@@ -281,6 +350,7 @@ public class leaveFragment extends BaseFragment {
         if (dataMap.containsKey(epcAndTid)) {
         } else {
             data tag = dataDao.getData(epcAndTid);
+            tag.setChecked(false);
             if (tag == null || tag.getId() == 0) {
                 data da = new data();
                 da.setTID(epcAndTid);
@@ -325,6 +395,14 @@ public class leaveFragment extends BaseFragment {
         } else {
             CommonUtils.showShorMsg(mainActivity, "请先扫描TID");
         }
+    }
+    @OnClick(R.id.hide)
+    public void hide() {
+        boolean isShow = adapter.isShow();
+        adapter.setShow(!isShow);
+        adapter.notifyDataSetChanged();
+        cheAll.setVisibility(View.GONE);
+        HideAndShow(isShow);
     }
 
     //清空
@@ -437,6 +515,7 @@ public class leaveFragment extends BaseFragment {
         das.clear();
         for (int i = 0; i < tag.size(); i++) {
             data da = tag.get(i);
+            da.setChecked(false);//给复选框状态为false
             if (da.getId() != 0 && da.getCondition().equals("已绑定")) {
                 da.setCondition("未入库");
                 dasM.put(da.getTID(), da);
@@ -469,4 +548,18 @@ public class leaveFragment extends BaseFragment {
             CommonUtils.showShorMsg(mainActivity, "功率设置失败");
         }
     }
+
+    private void HideAndShow(boolean t) {
+        if (t) {
+            //隐藏控件
+            cheAll.setVisibility(View.INVISIBLE);
+            lDelete.setVisibility(View.INVISIBLE);
+        } else {
+            //显示控件
+            cheAll.setVisibility(View.VISIBLE);
+            lDelete.setVisibility(View.VISIBLE);
+        }
+
+    }
+
 }

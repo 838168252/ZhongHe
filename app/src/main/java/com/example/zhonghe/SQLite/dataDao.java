@@ -158,12 +158,36 @@ public class dataDao {
         }
         return iRow;
     }
-    //根据Tid修改字段
+    //根据Tid修改TID字段
     public int batch3(String Tid1, String Tid2) {
         int iRow = 0;
         try {
             db = sqLhelper.getWritableDatabase();
             db.execSQL("UPDATE datas set TID = ? where TID = ?", new String[]{String.valueOf(Tid2), String.valueOf(Tid1)});
+            iRow = 1;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return iRow;
+    }
+    //根据Tid修改QR字段
+    public int batch4(String Tid1, String QR) {
+        int iRow = 0;
+        try {
+            db = sqLhelper.getWritableDatabase();
+            db.execSQL("UPDATE datas set QR = ? where TID = ?", new String[]{String.valueOf(QR), String.valueOf(Tid1)});
+            iRow = 1;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return iRow;
+    }
+    //根据Tid修改QR字段和Tid字段
+    public int batch5(String Tid1, String QR,String Tid2) {
+        int iRow = 0;
+        try {
+            db = sqLhelper.getWritableDatabase();
+            db.execSQL("UPDATE datas set QR = ?,Tid = ? where TID = ?", new String[]{String.valueOf(QR),String.valueOf(Tid2), String.valueOf(Tid1)});
             iRow = 1;
         } catch (Exception ex) {
             ex.printStackTrace();

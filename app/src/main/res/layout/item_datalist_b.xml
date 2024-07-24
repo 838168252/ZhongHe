@@ -146,17 +146,25 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
-            <Button
+<!--            <Button-->
+<!--                android:id="@+id/a_but"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="40dp"-->
+<!--                android:layout_marginTop="40dp"-->
+<!--                android:background="@drawable/button_bg"-->
+<!--                android:text="删除"-->
+<!--                android:textColor="#FDFBFB"-->
+<!--                android:textSize="12dp"-->
+<!--                android:textStyle="bold"-->
+<!--                android:gravity="center"/>-->
+            <CheckBox
                 android:id="@+id/a_but"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:layout_marginTop="40dp"
-                android:background="@drawable/button_bg"
-                android:text="删除"
-                android:textColor="#FDFBFB"
-                android:textSize="12dp"
-                android:textStyle="bold"
-                android:gravity="center"/>
+                android:layout_gravity="right"
+                android:clickable="false"
+                android:focusable="false" />
 
         </LinearLayout>
     </LinearLayout>
