@@ -152,7 +152,7 @@
             android:gravity="left"
             android:lines="1"
             android:padding="1dp"
-            android:text="其他（包含已入库,已出库）："
+            android:text="其他（包含已入库,未绑定）："
             android:textColor="@color/color7474"
             android:textSize="15sp"
             android:textStyle="bold" />

@@ -387,9 +387,11 @@ public class enterFragment extends BaseFragment implements View.OnClickListener 
                 dasM.put(epcAndTid, da);
             } else if (tag.getId() != 0 && tag.getCondition().equals("已入库")) {
                 dasM.put(epcAndTid, tag);
-            } else if (tag.getId() != 0 && tag.getCondition().equals("已出库")) {
-                dasM.put(epcAndTid, tag);
-            } else {
+            }
+//            else if (tag.getId() != 0 && tag.getCondition().equals("已出库")) {
+//                dasM.put(epcAndTid, tag);
+//            }
+            else {
                 dataMap.put(epcAndTid, tag);
             }
         }
@@ -550,9 +552,11 @@ public class enterFragment extends BaseFragment implements View.OnClickListener 
             list.get(i).setChecked(false);//给复选框状态为false
             if (list.get(i).getId() != 0 && list.get(i).getCondition().equals("已入库")) {
                 dasM.put(list.get(i).getTID(), list.get(i));
-            } else if (list.get(i).getId() != 0 && list.get(i).getCondition().equals("已出库")) {
-                dasM.put(list.get(i).getTID(), list.get(i));
-            } else {
+            }
+//            else if (list.get(i).getId() != 0 && list.get(i).getCondition().equals("已出库")) {
+//                dasM.put(list.get(i).getTID(), list.get(i));
+//            }
+            else {
                 dataMap.put(list.get(i).getTID(), list.get(i));
             }
         }

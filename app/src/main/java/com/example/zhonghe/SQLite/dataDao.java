@@ -71,6 +71,7 @@ public class dataDao {
 
     //删除
     public int detele() {
+
         int iRow = 0;
         try {
             db = sqLhelper.getWritableDatabase();
