@@ -1,6 +1,6 @@
 package com.example.zhonghe.pojo;
 
-public class power {
+public class  power {
     private int s1;
     private int s2;
     private int s3;

@@ -69,6 +69,7 @@ public class dataBAdapter extends BaseAdapter {
             viewHolder.a_batch = convertView.findViewById(R.id.a_batch);
             viewHolder.a_type = convertView.findViewById(R.id.a_type);
             viewHolder.a_comment = convertView.findViewById(R.id.a_comment);
+            viewHolder.a_condition = convertView.findViewById(R.id.a_condition);
             viewHolder.a_but = convertView.findViewById(R.id.a_but);
             convertView.setTag(viewHolder);
         } else {
@@ -81,6 +82,7 @@ public class dataBAdapter extends BaseAdapter {
             viewHolder.a_batch.setText(item.getBatch() != null ? item.getBatch() : "");
             viewHolder.a_type.setText(item.getType() != null ? item.getType() : "");
             viewHolder.a_comment.setText(item.getComment() != null ? item.getComment() : "");
+            viewHolder.a_condition.setText(item.getCondition() != null ? item.getCondition() : "");
 
             if (isShow) {
                 viewHolder.a_but.setVisibility(View.VISIBLE);
@@ -106,7 +108,7 @@ public class dataBAdapter extends BaseAdapter {
     }
 
     private class ViewHolder {
-        private TextView a_TID, a_QR,a_batch,a_type,a_comment;
+        private TextView a_TID, a_QR,a_batch,a_type,a_comment,a_condition;
         private CheckBox a_but;
     }
 
