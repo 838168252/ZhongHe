@@ -123,16 +123,6 @@ public class bindingFragment extends BaseFragment {
 
     @OnClick(R.id.b_scan)
     public void invenroty() {
-        //超高频
-//        if (App.mUhfrManager == null) {
-//            CommonUtils.showShorMsg(mainActivity, "通讯超时");
-//            return;
-//        }
-//        if (!isReader) {
-//            startScanLabels();//开始盘点
-//        } else {
-//            stopScanLabels();//停止盘点
-//        }
         GetTid();
     }
 
@@ -168,91 +158,6 @@ public class bindingFragment extends BaseFragment {
         }
     }
 
-    //开始盘存
-//    private void startScanLabels() {
-//        list = new ArrayList();
-//        handler1.postDelayed(runnable_MainActivity, 0);
-//        bScan.setText("结束");
-//        isReader = true;
-//    }
-
-    //结束盘存
-//    private void stopScanLabels() {
-//        if (App.isConnectUHF) {
-//            if (isReader) {
-//                handler1.removeCallbacks(runnable_MainActivity);
-//                isReader = false;
-//                bScan.setText("扫描");
-//            }
-//        } else {
-//            CommonUtils.showLonMsg(mainActivity, "通讯超时");
-//            return;
-//        }
-//        isReader = false;
-//        removeDuplicate();
-//    }
-
-//    private Runnable runnable_MainActivity = new Runnable() {
-//        @Override
-//        public void run() {
-//            if (App.mUhfrManager == null) {
-//                stopScanLabels();
-//                return;
-//            }
-//            List<Reader.TAGINFO> listTag;
-//            listTag = App.mUhfrManager.tagEpcTidInventoryByTimer((short) 50);//开始读卡
-//            if (listTag != null && !listTag.isEmpty()) {
-//                for (Reader.TAGINFO tfs : listTag) {
-//                    String tid = Tools.Bytes2HexString(tfs.EmbededData, tfs.EmbededData.length);
-//                    Util.play(1, 0);//声音
-//                    System.out.println(tid);
-//                    list.add(tid);
-//                }
-//            }
-//            handler1.postDelayed(runnable_MainActivity, 0);
-//        }
-//    };
-
-    //利用HashSet不能添加重复数据的特性，来让list不可添加重复EPC
-//    private void removeDuplicate() {
-//        if (list != null && list.size() != 0) {
-//            HashSet<String> hset = new HashSet<String>(list);
-//            List<String> numberList = new ArrayList<String>(hset);
-//            spinner(numberList);
-//        } else {
-//            return;
-//        }
-//    }
-
-
-    //下拉框
-//    private void spinner(List<String> tids) {
-//        if (null != tids && tids.size() > 0) {
-//            ArrayAdapter<String> adapter = new ArrayAdapter<String>(mainActivity, android.R.layout.simple_spinner_item, tids);
-//            adapter.setDropDownViewResource(android.R.layout.simple_list_item_single_choice);
-//            bTid.setAdapter(adapter);
-//
-//            bTid.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//                @Override
-//                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-//
-//                    //获取Spinner控件的适配器
-//                    ArrayAdapter<String> adapter = (ArrayAdapter<String>) adapterView.getAdapter();
-//                    TID = adapter.getItem(i);
-//                }
-//
-//                //没有选中时的处理
-//                @Override
-//                public void onNothingSelected(AdapterView<?> adapterView) {
-//                }
-//            });
-//        } else {
-//            CommonUtils.showShorMsg(mainActivity, "没有搜索到TID");
-//            return;
-//        }
-//    }
-
-
     @OnClick(R.id.b_but2)
     public void clear() {
         if (isReader) {
@@ -264,23 +169,17 @@ public class bindingFragment extends BaseFragment {
 
     //使TID和QR为空
     private void setNull() {
-//        list.clear();
-//        bTid.setAdapter(null);
         bTid.setText("");
         bQr.setText("");
     }
 
     //清空
     private void initPane() {
-//        if (list != null) {
-//            list.clear();
-//        }
         bTid.setText("");
         bQr.setText("");
         bBatch.setText("");
         bType.setText("");
         bComment.setText("");
-//        bTid.setAdapter(null);
     }
 
     @Override
@@ -295,7 +194,6 @@ public class bindingFragment extends BaseFragment {
     @Override
     public void onPause() {
         super.onPause();
-//        stopScanLabels();
         initPane();
         if (mReceiverTag) {   //判断广播是否注册
             mReceiverTag = false;   //Tag值 赋值为false 表示该广播已被注销
@@ -329,9 +227,7 @@ public class bindingFragment extends BaseFragment {
             }
             boolean keyDown = intent.getBooleanExtra("keydown", false);
             if (keyDown) {
-//                ToastUtils.showText("KeyReceiver:keyCode = down" + keyCode);
             } else {
-//                ToastUtils.showText("KeyReceiver:keyCode = up" + keyCode);
                 switch (keyCode) {
                     case KeyEvent.KEYCODE_F1:
                         break;
@@ -391,32 +287,6 @@ public class bindingFragment extends BaseFragment {
             CommonUtils.showShorMsg(mainActivity, "TID和二维码不可为空");
         }
     }
-
-//    //禁止
-//    private void setScanKeyDisable() {
-//        int currentApiVersion = Build.VERSION.SDK_INT;
-//        if (currentApiVersion > Build.VERSION_CODES.N) {
-//            // For Android10.0 module
-//            scanUtil.disableScanKey("134");
-//            scanUtil.disableScanKey("137");
-//        }
-//
-//    }
-//
-//    //启动
-//    private void setScanKeyEnable() {
-//        int currentApiVersion = Build.VERSION.SDK_INT;
-//        if (currentApiVersion > Build.VERSION_CODES.N) {
-//            // For Android10.0 module
-//            scanUtil.enableScanKey("134");
-//            scanUtil.enableScanKey("137");
-//        }
-//        try {
-//            Thread.sleep(500);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//    }
 
     //设置功率
     private void setPower(){

@@ -189,24 +189,6 @@ public class enterFragment extends BaseFragment implements View.OnClickListener 
         }
     }
 
-    //确认提示框
-    private void Tooltip(String item) {
-        new AlertDialog.Builder(mainActivity).setTitle("确认提示")//设置对话框标题
-                .setMessage("是否删除当前TID：" + item)
-                .setPositiveButton("是", new DialogInterface.OnClickListener() {//添加确定按钮
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {//确定按钮的响应事件
-                        remove(item);
-                    }
-                })
-                .setNegativeButton("否", new DialogInterface.OnClickListener() {//添加返回按钮
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {//响应事件
-                    }
-                }).show();//在按键响应事件中显示此对话框
-    }
-
     //根据TID清除tagInfoList中的数据
     private void remove(String tid) {
         Iterator<data> iterator = dataList.iterator();
@@ -261,9 +243,6 @@ public class enterFragment extends BaseFragment implements View.OnClickListener 
                         adapter.notifyDataSetChanged();
                     }
                 }
-//                else {//若列表中没有数据则隐藏全选复选框
-//                    cheAll.setVisibility(View.GONE);
-//                }
             }
         });
         //删除按钮点击事件
@@ -503,9 +482,7 @@ public class enterFragment extends BaseFragment implements View.OnClickListener 
             }
             boolean keyDown = intent.getBooleanExtra("keydown", false);
             if (keyDown) {
-//                ToastUtils.showText("KeyReceiver:keyCode = down" + keyCode);
             } else {
-//                ToastUtils.showText("KeyReceiver:keyCode = up" + keyCode);
                 switch (keyCode) {
                     case KeyEvent.KEYCODE_F1:
                         break;

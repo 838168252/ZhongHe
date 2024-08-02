@@ -64,7 +64,7 @@ public class dataDao {
                     cursor.getString(cursor.getColumnIndex("comment")),
                     cursor.getString(cursor.getColumnIndex("time")),
                     cursor.getString(cursor.getColumnIndex("condition"))
-                    ));
+            ));
         }
         return list;
     }
@@ -83,6 +83,7 @@ public class dataDao {
         }
         return iRow;
     }
+
     //根据epc删除
     public int detele2(String TID) {
         int iRow = 0;
@@ -98,7 +99,7 @@ public class dataDao {
     }
 
     //根据rfid查询本地信息
-    public data getData(String tid){
+    public data getData(String tid) {
         data da = new data();
         db = sqLhelper.getWritableDatabase();
         Cursor cursor = db.rawQuery("select * from datas where TID = ?", new String[]{String.valueOf(tid)});
@@ -116,10 +117,10 @@ public class dataDao {
     }
 
     //根据QR/Tid查询本地信息
-    public List<data> getDatas(String qr){
+    public List<data> getDatas(String qr) {
         List<data> list = new ArrayList<>();
         db = sqLhelper.getWritableDatabase();
-        Cursor cursor = db.rawQuery("select * from datas where QR like ? OR TID like ?", new String[]{"%"+ String.valueOf(qr)+"%","%"+ String.valueOf(qr)+"%"});
+        Cursor cursor = db.rawQuery("select * from datas where QR like ? OR TID like ?", new String[]{"%" + String.valueOf(qr) + "%", "%" + String.valueOf(qr) + "%"});
         while (cursor.moveToNext()) {
             list.add(new data(
                     cursor.getInt(cursor.getColumnIndex("id")),
@@ -147,6 +148,7 @@ public class dataDao {
         }
         return iRow;
     }
+
     //根据id修改字段
     public int batch2(int id, String condition, String time) {
         int iRow = 0;
@@ -159,6 +161,7 @@ public class dataDao {
         }
         return iRow;
     }
+
     //根据Tid修改TID字段
     public int batch3(String Tid1, String Tid2) {
         int iRow = 0;
@@ -171,6 +174,7 @@ public class dataDao {
         }
         return iRow;
     }
+
     //根据Tid修改QR字段
     public int batch4(String Tid1, String QR) {
         int iRow = 0;
@@ -183,20 +187,22 @@ public class dataDao {
         }
         return iRow;
     }
+
     //根据Tid修改QR字段和Tid字段
-    public int batch5(String Tid1, String QR,String Tid2) {
+    public int batch5(String Tid1, String QR, String Tid2) {
         int iRow = 0;
         try {
             db = sqLhelper.getWritableDatabase();
-            db.execSQL("UPDATE datas set QR = ?,Tid = ? where TID = ?", new String[]{String.valueOf(QR),String.valueOf(Tid2), String.valueOf(Tid1)});
+            db.execSQL("UPDATE datas set QR = ?,Tid = ? where TID = ?", new String[]{String.valueOf(QR), String.valueOf(Tid2), String.valueOf(Tid1)});
             iRow = 1;
         } catch (Exception ex) {
             ex.printStackTrace();
         }
         return iRow;
     }
+
     //根据condition查询本地信息
-    public List<data> getListData(String condition){
+    public List<data> getListData(String condition) {
         List<data> list = new ArrayList<>();
         db = sqLhelper.getWritableDatabase();
         Cursor cursor = db.rawQuery("select * from datas where condition = ?", new String[]{String.valueOf(condition)});
@@ -222,10 +228,11 @@ public class dataDao {
         db = sqLhelper.getWritableDatabase();
         Cursor cursor = db.rawQuery("select DISTINCT  batch from datas ", null);
         while (cursor.moveToNext()) {
-            list.add( cursor.getString(cursor.getColumnIndex("batch")));
+            list.add(cursor.getString(cursor.getColumnIndex("batch")));
         }
         return list;
     }
+
     //查询所有type
     @SuppressLint("Range")
     public List<String> typeAll() {
@@ -233,15 +240,16 @@ public class dataDao {
         db = sqLhelper.getWritableDatabase();
         Cursor cursor = db.rawQuery("select DISTINCT  type from datas ", null);
         while (cursor.moveToNext()) {
-            list.add( cursor.getString(cursor.getColumnIndex("type")));
+            list.add(cursor.getString(cursor.getColumnIndex("type")));
         }
         return list;
     }
+
     //根据type/batch查询本地信息
-    public List<data> Datas(String type ,String batch){
+    public List<data> Datas(String type, String batch) {
         List<data> list = new ArrayList<>();
         db = sqLhelper.getWritableDatabase();
-        Cursor cursor = db.rawQuery("select * from datas where type = ? OR batch = ?", new String[]{String.valueOf(type),String.valueOf(batch)});
+        Cursor cursor = db.rawQuery("select * from datas where type = ? OR batch = ?", new String[]{String.valueOf(type), String.valueOf(batch)});
         while (cursor.moveToNext()) {
             list.add(new data(
                     cursor.getInt(cursor.getColumnIndex("id")),

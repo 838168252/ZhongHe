@@ -82,7 +82,7 @@ public class SheetHelper {
                     //要和title[]一一对应
                     switch (j) {
                         case 0:
-                            cell.setCellValue(rowNum+1);
+                            cell.setCellValue(rowNum + 1);
                             break;
                         case 1:
                             cell.setCellValue(da.getTID());
@@ -282,7 +282,6 @@ public class SheetHelper {
     }
 
 
-
     private static String getXlsxNewFileName(File file) {
         if (file.exists()) {
             String newPath = file.getPath().substring(0, file.getPath().length() - 5) + "(1).xlsx";
@@ -300,11 +299,6 @@ public class SheetHelper {
             return file.getPath();
         }
     }
-
-
-
-
-
 
 
 }

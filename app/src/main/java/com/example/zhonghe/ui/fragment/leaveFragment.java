@@ -1,4 +1,4 @@
- package com.example.zhonghe.ui.fragment;
+package com.example.zhonghe.ui.fragment;
 
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -143,8 +143,8 @@ public class leaveFragment extends BaseFragment {
     //列表显示数据适配器A
     private void ListViewA() {
         if (dataList != null) {
-            lAmount1.setText(dataList.size()+"");
-            adapter = new dataBAdapter(lListA,mainActivity, dataList);
+            lAmount1.setText(dataList.size() + "");
+            adapter = new dataBAdapter(lListA, mainActivity, dataList);
             lListA.setAdapter(adapter);
         }
     }
@@ -152,7 +152,7 @@ public class leaveFragment extends BaseFragment {
     //列表显示数据适配器B
     private void ListViewB() {
         if (das != null) {
-            lAmount2.setText(das.size()+"");
+            lAmount2.setText(das.size() + "");
             elseAdapter = new elseAdapter(mainActivity, das);
             lListB.setAdapter(elseAdapter);
         }
@@ -200,9 +200,9 @@ public class leaveFragment extends BaseFragment {
 
     @OnClick(R.id.l_scan)
     public void lscan() {
-//        scanUtil.startScan();//二维扫描
         uhf();
     }
+
     /**
      * 初始化事件监听方法
      */
@@ -228,9 +228,6 @@ public class leaveFragment extends BaseFragment {
                         adapter.notifyDataSetChanged();
                     }
                 }
-//                else {//若列表中没有数据则隐藏全选复选框
-//                    cheAll.setVisibility(View.GONE);
-//                }
             }
         });
         //删除按钮点击事件
@@ -327,8 +324,8 @@ public class leaveFragment extends BaseFragment {
             }
             adapter.notifyDataSetChanged();//刷新adapter
             elseAdapter.notifyDataSetChanged();
-            lAmount1.setText(dataList.size()+"");
-            lAmount2.setText(dasM.size()+"");
+            lAmount1.setText(dataList.size() + "");
+            lAmount2.setText(dasM.size() + "");
             handler1.postDelayed(runnable_MainActivity, 0);
         }
     };
@@ -396,6 +393,7 @@ public class leaveFragment extends BaseFragment {
             CommonUtils.showShorMsg(mainActivity, "请先扫描TID");
         }
     }
+
     @OnClick(R.id.hide)
     public void hide() {
         boolean isShow = adapter.isShow();
@@ -411,8 +409,8 @@ public class leaveFragment extends BaseFragment {
         dataList.clear();
         lQR.setText("");
         adapter.notifyDataSetChanged();
-        lAmount1.setText(dataList.size()+"");
-        lAmount2.setText(dasM.size()+"");
+        lAmount1.setText(dataList.size() + "");
+        lAmount2.setText(dasM.size() + "");
     }
 
     @OnClick(R.id.l_clear)
@@ -529,19 +527,19 @@ public class leaveFragment extends BaseFragment {
         dataList.addAll(dataMap.values());
         adapter.notifyDataSetChanged();//刷新adapter
         elseAdapter.notifyDataSetChanged();
-        lAmount1.setText(dataList.size()+"");
-        lAmount2.setText(dasM.size()+"");
+        lAmount1.setText(dataList.size() + "");
+        lAmount2.setText(dasM.size() + "");
     }
 
     //设置功率
-    private void setPower(){
+    private void setPower() {
         if (!App.isConnectUHF) {
             CommonUtils.showShorMsg(mainActivity, "通讯超时");
             return;
         }
         power p = SPDataUtils.getInfo(mainActivity);
         err = App.mUhfrManager.setPower(p.getS3(), p.getS3());
-        if (err == Reader.READER_ERR.MT_OK_ERR) { 
+        if (err == Reader.READER_ERR.MT_OK_ERR) {
             sharedUtil.savePower(p.getS3());
         } else {
             //5101 仅支持30db

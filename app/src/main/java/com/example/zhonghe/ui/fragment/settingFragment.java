@@ -169,16 +169,6 @@ public class settingFragment extends BaseFragment {
             CommonUtils.showShorMsg(mainActivity, "查询失败");
         }
 
-
-//        int[] powerArray = App.mUhfrManager.getPower();
-//        if (powerArray != null && powerArray.length > 0) {
-//            LogUtil.e("powerArray = " + powerArray[0]);
-//            spinnerPower1.setSelection(powerArray[0]);
-//
-//            CommonUtils.showShorMsg(mainActivity, "输出功率:" + powerArray[0] + "dB");
-//        } else {
-//            CommonUtils.showShorMsg(mainActivity, "查询失败");
-//        }
     }
 
     @OnClick(R.id.button_query_session)
@@ -261,14 +251,6 @@ public class settingFragment extends BaseFragment {
             CommonUtils.showShorMsg(mainActivity, "设置失败");
         }
 
-//        err = App.mUhfrManager.setPower(s2, s2);
-//        if (err == Reader.READER_ERR.MT_OK_ERR) {
-//            CommonUtils.showShorMsg(mainActivity, "设置成功");
-//            sharedUtil.savePower(s2);
-//        } else {
-//            //5101 仅支持30db
-//            CommonUtils.showShorMsg(mainActivity, "设置失败");
-//        }
     }
 
     @OnClick(R.id.button_set_session)

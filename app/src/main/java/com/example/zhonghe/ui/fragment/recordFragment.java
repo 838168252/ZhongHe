@@ -439,9 +439,7 @@ public class recordFragment extends BaseFragment implements View.OnClickListener
             }
             boolean keyDown = intent.getBooleanExtra("keydown", false);
             if (keyDown) {
-//                ToastUtils.showText("KeyReceiver:keyCode = down" + keyCode);
             } else {
-//                ToastUtils.showText("KeyReceiver:keyCode = up" + keyCode);
                 switch (keyCode) {
                     case KeyEvent.KEYCODE_F1:
                         break;

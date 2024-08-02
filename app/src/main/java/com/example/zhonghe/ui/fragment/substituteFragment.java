@@ -241,34 +241,6 @@ public class substituteFragment extends BaseFragment implements View.OnClickList
         }
     }
 
-    //下拉框
-//    private void spinner() {
-//        if (null != das && das.size() > 0) {
-//            getTid();
-//            ArrayAdapter<String> adapter = new ArrayAdapter<String>(mainActivity, android.R.layout.simple_spinner_item, tids);
-//            adapter.setDropDownViewResource(android.R.layout.simple_list_item_single_choice);
-//            in_TID.setAdapter(adapter);
-//
-//            in_TID.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//                @Override
-//                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-//
-//                    //获取Spinner控件的适配器
-//                    ArrayAdapter<String> adapter = (ArrayAdapter<String>) adapterView.getAdapter();
-//                    TID = adapter.getItem(i);
-//                }
-//
-//                //没有选中时的处理
-//                @Override
-//                public void onNothingSelected(AdapterView<?> adapterView) {
-//                }
-//            });
-//        } else {
-//            CommonUtils.showShorMsg(mainActivity, "没有搜索到未绑定TID");
-//            return;
-//        }
-//    }
-
     //确认提示框
     private void Tooltip(String item) {
         new AlertDialog.Builder(mainActivity).setTitle("确认提示")//设置对话框标题
@@ -556,18 +528,6 @@ public class substituteFragment extends BaseFragment implements View.OnClickList
         }
         dataList.addAll(dataMap.values());
         adapter.notifyDataSetChanged();//刷新adapter
-    }
-
-    private void ChangeState() {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                /**
-                 * 延时改变状态,以免立马触发超高频
-                 */
-                window = true;
-            }
-        }, 2000); //延时2秒
     }
 
     //设置功率
